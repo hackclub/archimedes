@@ -1,0 +1,40 @@
+{
+    "display_information": {
+        "name": "Archimedes",
+        "description": "A helpful bot named after the great mathematician",
+        "background_color": "#2c3e50"
+    },
+    "features": {
+        "app_home": {
+            "home_tab_enabled": true,
+            "messages_tab_read_only_enabled": false
+        },
+        "bot_user": {
+            "display_name": "Archimedes",
+            "always_online": true
+        }
+    },
+    "oauth_config": {
+        "scopes": {
+            "bot": [
+                "chat:write",
+                "channels:history",
+                "users:read",
+                "users:read.email"
+            ]
+        }
+    },
+    "settings": {
+        "event_subscriptions": {
+            "bot_events": [
+                "app_home_opened",
+                "message.channels"
+            ]
+        },
+        "interactivity": {
+            "is_enabled": true
+        },
+        "socket_mode_enabled": true,
+        "token_rotation_enabled": false
+    }
+}
