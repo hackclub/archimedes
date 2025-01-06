@@ -17,7 +17,7 @@ export default async (app: Slack.App) => {
         });
     });
 
-    app.view("submit-article-modal", async ({ ack, view, client }) => {
+    app.view("submit-article-modal", async ({ ack, view }) => {
         await ack();
 
         const userId = view.private_metadata;
@@ -28,10 +28,14 @@ export default async (app: Slack.App) => {
 
         await db.insert(storiesTable, {
             headline,
-            short_description: shortDescription,
-            long_article: longArticle,
+            shortDescription,
+            longArticle,
             identifier,
-            reporter: userId,
+            authors: [userId],
+            authorsName: null,
+            status: "Draft",
+            newsletters: [],
+            happenings: [],
         });
 
         logger.info(`Headline: ${headline}`);
@@ -40,7 +44,7 @@ export default async (app: Slack.App) => {
     app.event("app_home_opened", async ({ event, client }) => {
         logger.debug(`Received app_home_opened event from ${event.user}`);
         const reporterNames = await db.scan(reportersTable);
-        const reporter = reporterNames.find((reporter) => reporter.slack_id === event.user);
+        const reporter = reporterNames.find((reporter) => reporter.slackId === event.user);
 
         if (!reporter) {
             logger.warn(`User ${event.user} is not a reporter - showing notAReporter view`);
@@ -53,7 +57,7 @@ export default async (app: Slack.App) => {
 
         await client.views.publish({
             user_id: event.user,
-            view: reporterHome(reporter.first_name),
+            view: reporterHome(reporter.firstName),
         });
     })
 };
