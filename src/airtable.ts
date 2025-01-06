@@ -15,7 +15,8 @@ const tableInfo = z.object({
 });
 const ZAirtableJsonSchema = z.object({
     baseId: z.string(),
-    reporters: tableInfo
+    reporters: tableInfo,
+    stories: tableInfo
 });
 const airtableJson = await ZAirtableJsonSchema.safeParseAsync(JSON.parse(await readFile('./airtable.json', 'utf-8')));
 if (airtableJson.error) {
@@ -29,4 +30,10 @@ export const reportersTable: Table<{ id: string, slack_id: string, first_name: s
     baseId: airtableJson.data.baseId,
     tableId: airtableJson.data.reporters.tableId,
     schema: { slack_id: 'string', first_name: 'string', full_name: 'string' },
+};
+export const storiesTable: Table<{ id: string, headline: string, short_description: string, long_article: string, identifier: string, reporter: string }> = {
+    name: 'stories',
+    baseId: airtableJson.data.baseId,
+    tableId: airtableJson.data.stories.tableId,
+    schema: { headline: 'string', short_description: 'string', long_article: 'string', identifier: 'string', reporter: 'string' },
 };

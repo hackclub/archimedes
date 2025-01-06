@@ -3,5 +3,9 @@
     "reporters": {
         "name": "reporters",
         "tableId": "tblsvsF0yqBtMDOEX"
+    },
+    "stories": {
+        "name": "stories",
+        "tableId": "tblVumB36qqSGeRyA"
     }
 }

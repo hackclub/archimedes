@@ -1,6 +1,9 @@
 import Slack, { type BlockAction } from '@slack/bolt';
 import logger from "../logger";
-import { db, reportersTable } from "../airtable"
+import { db, reportersTable, storiesTable } from "../airtable"
+import slugify from "slugify";
+import { richTextBlockToMrkdwn } from '../util';
+
 import notAReporter from "../blocks/appHome/notAReporter";
 import reporterHome from "../blocks/appHome/reporterHome";
 import submitArticleModal from "../blocks/appHome/submitArticleModal";
@@ -18,9 +21,18 @@ export default async (app: Slack.App) => {
         await ack();
 
         const userId = view.private_metadata;
-        const headline = view.state.values.headline_input.headline.value;
-        const shortDescription = view.state.values.short_description_input.short_description.rich_text_value;
-        const longArticle = view.state.values.long_article_input.long_article.rich_text_value;
+        const headline = view.state.values.headline_input.headline.value!;
+        const shortDescription = richTextBlockToMrkdwn(view.state.values.short_description_input.short_description.rich_text_value!);
+        const longArticle = richTextBlockToMrkdwn(view.state.values.long_article_input.long_article.rich_text_value!);
+        const identifier = slugify(headline, { replacement: "_", lower: true });
+
+        await db.insert(storiesTable, {
+            headline,
+            short_description: shortDescription,
+            long_article: longArticle,
+            identifier,
+            reporter: userId,
+        });
 
         logger.info(`Headline: ${headline}`);
     })
