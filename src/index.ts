@@ -16,5 +16,5 @@ for (const [name, event] of Object.entries(events)) {
     logger.info(`Registered event: ${name}`);
 }
 
-await app.start(env.PORT);
+await app.start();
 logger.info(`Running Archimedes v${version}`);
