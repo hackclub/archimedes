@@ -37,7 +37,7 @@ export interface Story extends Item {
     longArticle: string,
     authors: string[],
     authorsName: string | null,
-    status: string,
+    status: "Draft" | "Awaiting Review" | "Published",
     newsletters: string[],
     happenings: string[],
     autonumber: number,

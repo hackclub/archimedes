@@ -18,7 +18,6 @@
     "@slack/bolt": "^4.2.0",
     "airtable-ts": "^1.4.0",
     "pino": "^9.6.0",
-    "slugify": "^1.6.6",
     "zod": "^3.24.1",
     "zod-validation-error": "^3.4.0"
   }
