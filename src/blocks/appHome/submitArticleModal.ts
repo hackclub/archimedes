@@ -1,5 +1,7 @@
-export default {
+export default (userId: string) => ({
     type: "modal" as const,
+    private_metadata: userId,
+    callback_id: "submit-article-modal",
     title: {
         type: "plain_text" as const,
         text: "Submit an article",
@@ -18,13 +20,14 @@ export default {
     blocks: [
         {
             type: "input",
+            block_id: "headline_input",
             element: {
                 type: "plain_text_input",
+                action_id: "headline",
                 placeholder: {
                     type: "plain_text",
                     text: "e.g. Wild Orpheus spotted in the streets of Vermont"
                 },
-                action_id: "plain_text_input-action"
             },
             label: {
                 type: "plain_text",
@@ -34,9 +37,10 @@ export default {
         },
         {
             type: "input",
+            block_id: "short_description_input",
             element: {
                 type: "rich_text_input",
-                action_id: "rich_text_input-action"
+                action_id: "short_description",
             },
             label: {
                 type: "plain_text",
@@ -46,9 +50,10 @@ export default {
         },
         {
             type: "input",
+            block_id: "long_article_input",
             element: {
                 type: "rich_text_input",
-                action_id: "rich_text_input-action"
+                action_id: "long_article",
             },
             label: {
                 type: "plain_text",
@@ -57,4 +62,4 @@ export default {
             }
         }
     ]
-}
+})

@@ -4,7 +4,7 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun . | pino-pretty",
+    "dev": "bun . | pino-pretty -L debug",
     "pino-pretty": "pino-pretty"
   },
   "devDependencies": {
