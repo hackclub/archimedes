@@ -1,10 +1,10 @@
 export default (userId: string) => ({
     type: "modal" as const,
     private_metadata: userId,
-    callback_id: "submit-article-modal",
+    callback_id: "submit-story-modal",
     title: {
         type: "plain_text" as const,
-        text: "Submit an article",
+        text: "Submit a story",
         emoji: true
     },
     submit: {

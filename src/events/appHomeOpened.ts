@@ -5,18 +5,18 @@ import { richTextBlockToMrkdwn } from '../util';
 
 import notAReporter from "../blocks/appHome/notAReporter";
 import reporterHome from "../blocks/appHome/reporterHome";
-import submitArticleModal from "../blocks/appHome/submitArticleModal";
+import storyModal from "../blocks/appHome/storyModal";
 
 export default async (app: Slack.App) => {
-    app.action("draft-post-button", async ({ ack, client, body }) => {
+    app.action("new-story-button", async ({ ack, client, body }) => {
         await ack();
         await client.views.open({
             trigger_id: (body as BlockAction).trigger_id,
-            view: submitArticleModal(body.user.id),
+            view: storyModal(body.user.id),
         });
     });
 
-    app.view("submit-article-modal", async ({ ack, view, client }) => {
+    app.view("submit-story-modal", async ({ ack, view, client }) => {
         await ack();
 
         const userId = view.private_metadata;

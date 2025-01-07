@@ -13,7 +13,7 @@ export default {
             type: "section",
             text: {
                 type: "mrkdwn",
-                text: "Since you're not a reporter, you can't suggest articles. Sorry!"
+                text: "Since you're not a reporter, you can't suggest stories. Sorry!"
             }
         }
     ]
