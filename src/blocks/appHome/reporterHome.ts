@@ -24,7 +24,7 @@ export default async (firstName: string, slackId: string) => {
                 type: "button",
                 text: {
                     type: "plain_text",
-                    text: "View Post",
+                    text: "View Story",
                     emoji: true
                 },
             }
