@@ -72,6 +72,32 @@ export default async (firstName: string, slackId: string) => {
                 type: "section",
                 text: {
                     type: "mrkdwn",
+                    text: "Welcome to Archimedes!"
+                }
+            },
+
+            {
+                type: "divider"
+            },
+
+            {
+                type: "header",
+                text: {
+                    type: "plain_text",
+                    text: "Your Articles",
+                    emoji: true
+                }
+            },
+            ...storyBlocks,
+
+            {
+                type: "divider"
+            },
+
+            {
+                type: "section",
+                text: {
+                    type: "mrkdwn",
                     text: "Start writing a new story! :yay: You'll be able to review it before it's sent for approval."
                 },
                 accessory: {
