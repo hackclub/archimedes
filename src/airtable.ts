@@ -41,11 +41,12 @@ export interface Story extends Item {
     shortDescription: string,
     longArticle: string,
     authors: string[],
-    readonly authorsName: string | null,
+    readonly authorsName: string[] | null,
     status: "Draft" | "Awaiting Review" | "Published",
     newsletters: string[],
     happenings: string[],
     readonly autonumber: number,
+    readonly slackIdRollup: string,
 }
 
 export const storiesTable: Table<Story> = {
@@ -59,11 +60,12 @@ export const storiesTable: Table<Story> = {
         shortDescription: 'string',
         longArticle: 'string',
         authors: 'string[]',
-        authorsName: 'string | null',
+        authorsName: 'string[] | null',
         status: 'string',
         newsletters: 'string[]',
         happenings: 'string[]',
         autonumber: 'number',
+        slackIdRollup: 'string',
     },
 };
 

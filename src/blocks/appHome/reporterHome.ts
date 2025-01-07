@@ -1,4 +1,11 @@
-export default (firstName: string) => {
+import { db, storiesTable } from "../../airtable"
+import logger from "../../logger";
+
+export default async (firstName: string, slackId: string) => {
+    const stories = await db.scan(storiesTable, {
+        filterByFormula: `FIND("${slackId}", {slack_id_rollup}) > 0`,
+    })
+    logger.info(`Found ${stories.length} stories for reporter ${slackId}`);
     return {
         type: "home" as const,
         blocks: [

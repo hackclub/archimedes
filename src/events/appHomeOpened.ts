@@ -16,7 +16,7 @@ export default async (app: Slack.App) => {
         });
     });
 
-    app.view("submit-article-modal", async ({ ack, view }) => {
+    app.view("submit-article-modal", async ({ ack, view, client }) => {
         await ack();
 
         const userId = view.private_metadata;
@@ -24,7 +24,7 @@ export default async (app: Slack.App) => {
         const shortDescription = richTextBlockToMrkdwn(view.state.values.short_description_input.short_description.rich_text_value!);
         const longArticle = richTextBlockToMrkdwn(view.state.values.long_article_input.long_article.rich_text_value!);
 
-        const user = (await db.scan(reportersTable, {
+        const reporter = (await db.scan(reportersTable, {
             filterByFormula: `{slack_id} = "${userId}"`,
         }))[0]
 
@@ -32,13 +32,18 @@ export default async (app: Slack.App) => {
             headline,
             shortDescription,
             longArticle,
-            authors: [user.id],
+            authors: [reporter.id],
             status: "Draft",
             newsletters: [],
             happenings: [],
         });
 
         logger.info(`Headline: ${headline}`);
+
+        await client.views.publish({
+            user_id: userId,
+            view: await reporterHome(reporter.firstName, reporter.slackId),
+        });
     })
 
     app.event("app_home_opened", async ({ event, client }) => {
@@ -58,7 +63,8 @@ export default async (app: Slack.App) => {
 
         await client.views.publish({
             user_id: event.user,
-            view: reporterHome(reporter.firstName),
+            view: await reporterHome(reporter.firstName, reporter.slackId),
         });
     })
 };
+
