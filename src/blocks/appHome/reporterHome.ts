@@ -5,7 +5,32 @@ export default async (firstName: string, slackId: string) => {
     const stories = await db.scan(storiesTable, {
         filterByFormula: `FIND("${slackId}", {slack_id_rollup}) > 0`,
     })
-    logger.info(`Found ${stories.length} stories for reporter ${slackId}`);
+    const storyBlocks = stories.length === 0 ? [
+        {
+            type: "section",
+            text: {
+                type: "mrkdwn",
+                text: "No stories yet - get writing!"
+            }
+        }
+    ] : stories.map(story => {
+        return {
+            type: "section",
+            text: {
+                type: "mrkdwn",
+                text: `*${story.headline}* _(${story.status})_\n${story.shortDescription}​`
+            },
+            accessory: {
+                type: "button",
+                text: {
+                    type: "plain_text",
+                    text: "View Post",
+                    emoji: true
+                },
+            }
+        }
+    })
+
     return {
         type: "home" as const,
         blocks: [
@@ -21,10 +46,37 @@ export default async (firstName: string, slackId: string) => {
                 type: "section",
                 text: {
                     type: "mrkdwn",
+                    text: "Welcome to Archimedes!"
+                }
+            },
+
+            {
+                type: "divider"
+            },
+
+            {
+                type: "header",
+                text: {
+                    type: "plain_text",
+                    text: "Your Articles",
+                    emoji: true
+                }
+            },
+            ...storyBlocks,
+
+            {
+                type: "divider"
+            },
+
+            {
+                type: "section",
+                text: {
+                    type: "mrkdwn",
                     text: "Create a new draft post. You'll be able to review it before it's sent for approval."
                 },
                 accessory: {
                     type: "button",
+                    style: "primary",
                     text: {
                         type: "plain_text",
                         text: "Draft Post",
