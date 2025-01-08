@@ -2,9 +2,11 @@ import { db, storiesTable } from "../../airtable"
 import logger from "../../logger";
 
 export default async (firstName: string, slackId: string) => {
+    logger.debug(`Generating reporter home for ${firstName} (${slackId})`);
     const stories = await db.scan(storiesTable, {
         filterByFormula: `FIND("${slackId}", {slack_id_rollup}) > 0`,
     })
+
     const storyBlocks = stories.length === 0 ? [
         {
             type: "section",
@@ -24,9 +26,11 @@ export default async (firstName: string, slackId: string) => {
                 type: "button",
                 text: {
                     type: "plain_text",
-                    text: "View Story",
+                    text: "Edit Story",
                     emoji: true
                 },
+                action_id: "edit-story-button",
+                value: story.id
             }
         }
     })

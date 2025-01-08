@@ -16,29 +16,61 @@ export default async (app: Slack.App) => {
         });
     });
 
+    app.action("edit-story-button", async ({ ack, client, body }) => {
+        await ack();
+        const action = (body as BlockAction).actions[0] as Slack.ButtonAction;
+        logger.debug(`(Edit Story) Fetching story ${action.value}`);
+        const story = await db.get(storiesTable, action.value!);
+        await client.views.open({
+            trigger_id: (body as BlockAction).trigger_id,
+            view: storyModal(body.user.id, story),
+        });
+    });
+
     app.view("submit-story-modal", async ({ ack, view, client }) => {
         await ack();
 
-        const userId = view.private_metadata;
-        const headline = view.state.values.headline_input.headline.value!;
-        const shortDescription = richTextBlockToMrkdwn(view.state.values.short_description_input.short_description.rich_text_value!);
-        const longArticle = richTextBlockToMrkdwn(view.state.values.long_article_input.long_article.rich_text_value!);
+        const metadata = JSON.parse(view.private_metadata);
+        const userId: string = metadata.userId;
+        const storyId: string | undefined = metadata.storyId;
 
+        const headline = view.state.values.headline_input.headline.value!;
+        const shortDescriptionRt = view.state.values.short_description_input.short_description.rich_text_value!;
+        const shortDescription = richTextBlockToMrkdwn(shortDescriptionRt);
+        const longArticleRt = view.state.values.long_article_input.long_article.rich_text_value!;
+        const longArticle = richTextBlockToMrkdwn(longArticleRt);
+
+        logger.debug(`Fetching reporter for ${userId}`);
         const reporter = (await db.scan(reportersTable, {
             filterByFormula: `{slack_id} = "${userId}"`,
         }))[0]
 
-        await db.insert(storiesTable, {
-            headline,
-            shortDescription,
-            longArticle,
-            authors: [reporter.id],
-            status: "Draft",
-            newsletters: [],
-            happenings: [],
-        });
+        if (storyId) {
+            logger.debug(`Updating story for ${userId} (${headline})`);
+            await db.update(storiesTable, {
+                id: storyId,
+                headline,
+                shortDescription,
+                longArticle,
+                shortDescriptionRt: JSON.stringify(shortDescriptionRt),
+                longArticleRt: JSON.stringify(longArticleRt),
+            });
+        } else {
+            logger.debug(`Inserting story for ${userId} (${headline})`);
+            await db.insert(storiesTable, {
+                headline,
+                shortDescription,
+                longArticle,
+                shortDescriptionRt: JSON.stringify(shortDescriptionRt),
+                longArticleRt: JSON.stringify(longArticleRt),
+                authors: [reporter.id],
+                status: "Draft",
+                newsletters: [],
+                happenings: [],
+            });
+        }
 
-        logger.info(`Headline: ${headline}`);
+        logger.debug(`Headline: ${headline}`);
 
         await client.views.publish({
             user_id: userId,
@@ -47,7 +79,7 @@ export default async (app: Slack.App) => {
     })
 
     app.event("app_home_opened", async ({ event, client }) => {
-        logger.debug(`Received app_home_opened event from ${event.user}`);
+        logger.debug(`Received app_home_opened event from ${event.user} - scanning for reporter`);
         const reporter = (await db.scan(reportersTable, {
             filterByFormula: `{slack_id} = "${event.user}"`,
         }))[0];
@@ -67,4 +99,3 @@ export default async (app: Slack.App) => {
         });
     })
 };
-

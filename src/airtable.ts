@@ -24,7 +24,7 @@ const ZAirtableJsonSchema = z.object({
 const airtableJson = await ZAirtableJsonSchema.safeParseAsync(JSON.parse(await readFile('./airtable.json', 'utf-8')));
 if (airtableJson.error) {
     const error = fromError(airtableJson.error);
-    logger.error(`Failed to parse airtable.json: ${error.message}`);
+    logger.fatal(`Failed to parse airtable.json: ${error.message}`);
     throw airtableJson.error;
 }
 
@@ -40,6 +40,8 @@ export interface Story extends Item {
     headline: string,
     shortDescription: string,
     longArticle: string,
+    shortDescriptionRt: string,
+    longArticleRt: string,
     authors: string[],
     readonly authorsName: string[] | null,
     status: "Draft" | "Awaiting Review" | "Published",
@@ -59,6 +61,8 @@ export const storiesTable: Table<Story> = {
         headline: 'string',
         shortDescription: 'string',
         longArticle: 'string',
+        shortDescriptionRt: 'string',
+        longArticleRt: 'string',
         authors: 'string[]',
         authorsName: 'string[] | null',
         status: 'string',
