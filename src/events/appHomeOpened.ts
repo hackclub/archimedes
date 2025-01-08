@@ -1,4 +1,5 @@
-import Slack, { type BlockAction } from '@slack/bolt';
+import type Slack from '@slack/bolt';
+import type { BlockAction } from '@slack/bolt';
 import logger from "../logger";
 import { db, reportersTable, storiesTable } from "../airtable"
 import { richTextBlockToMrkdwn } from '../util';

@@ -1,18 +1,19 @@
-import Slack from '@slack/bolt';
+import type Slack from '@slack/bolt';
 
 export const quoteMrkdwn = (text: string): string => {
-    return ('> ' + text).split('\n').join('\n> ')
+    return (`> ${text}`).split('\n').join('\n> ')
 }
 
 const applyMrkdwnStyle = (text: string, style: Slack.types.RichTextElement['style']): string => {
     if (!style || text.startsWith(' ') || text.endsWith(' ')) return text
 
-    if (style.code) text = `\`${text}\``
-    if (style.strike) text = `~${text}~`
-    if (style.italic) text = `_${text}_`
-    if (style.bold) text = `*${text}*`
+    let updatedText = text;
+    if (style.code) updatedText = `\`${updatedText}\``
+    if (style.strike) updatedText = `~${updatedText}~`
+    if (style.italic) updatedText = `_${updatedText}_`
+    if (style.bold) updatedText = `*${updatedText}*`
 
-    return text
+    return updatedText
 }
 
 // Conversion from these docs: https://api.slack.com/reference/surfaces/formatting#advanced
@@ -24,17 +25,19 @@ const richTextElementToMrkdwn = (element: Slack.types.RichTextElement): string =
             return applyMrkdwnStyle(`<#${element.channel_id}>`, element.style)
         case 'color':
             return applyMrkdwnStyle(element.value, element.style)
-        case 'date':
+        case 'date': {
             let dateText = `<!date^${element.timestamp}^${element.format}`
             if (element.url) dateText += `^${element.url}`
             if (element.fallback) dateText += `|${element.fallback}`
             dateText += '>'
             return applyMrkdwnStyle(dateText, element.style)
+        }
         case 'emoji':
             return `:${element.name}:`
-        case 'link':
+        case 'link': {
             const formattedText = element.text ? `<${element.url}|${element.text}>` : element.url
             return applyMrkdwnStyle(formattedText, element.style)
+        }
         case 'team': // There is no documented way to display this nicely in mrkdwn
             return applyMrkdwnStyle(element.team_id, element.style)
         case 'text':
@@ -66,7 +69,7 @@ const richTextBlockElementToMrkdwn = (element: Slack.types.RichTextBlockElement)
         case 'rich_text_list':
             return richTextListToMrkdwn(element)
         case 'rich_text_preformatted':
-            return '```' + element.elements.map(richTextElementToMrkdwn).join('') + '```'
+            return `\`\`\`${element.elements.map(richTextElementToMrkdwn).join('')}\`\`\``
         case 'rich_text_quote':
             return quoteMrkdwn(element.elements.map(richTextElementToMrkdwn).join(''))
         case 'rich_text_section':

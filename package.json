@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "LOG_LEVEL=debug bun . | pino-pretty",
+    "lint": "biome lint",
     "pino-pretty": "pino-pretty"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@types/bun": "latest",
     "pino-pretty": "^13.0.0"
   },
