@@ -1,0 +1,56 @@
+import type { Story } from "../../airtable";
+import type Slack from "@slack/bolt";
+
+export default (userId: string, stories: Story[]): Slack.types.ModalView => {
+    const selectOptions = stories.map(story => ({
+        text: {
+            type: "plain_text",
+            text: story.headline,
+            emoji: true
+        },
+        value: story.id
+    }));
+
+    return {
+        type: "modal",
+        private_metadata: userId,
+        callback_id: "publish-story-modal",
+        title: {
+            type: "plain_text",
+            text: "Publish a story",
+            emoji: true
+        },
+        submit: {
+            type: "plain_text",
+            text: "Publish",
+            emoji: true
+        },
+        close: {
+            type: "plain_text",
+            text: "Cancel",
+            emoji: true
+        },
+        blocks: [
+            {
+                type: "input",
+                block_id: "story_selector",
+                element: {
+                    type: "static_select",
+                    initial_option: selectOptions[0],
+                    placeholder: {
+                        type: "plain_text",
+                        text: "e.g. Wild Orpheus spotted in the streets of Vermont",
+                        emoji: true
+                    },
+                    options: selectOptions,
+                    action_id: "select_input"
+                },
+                label: {
+                    type: "plain_text",
+                    text: "Story being published",
+                    emoji: true
+                }
+            } as Slack.types.InputBlock
+        ]
+    };
+}

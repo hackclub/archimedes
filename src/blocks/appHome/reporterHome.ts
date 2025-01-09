@@ -88,6 +88,23 @@ export default async (firstName: string, slackId: string) => {
                     },
                     action_id: "new-story-button"
                 }
+            },
+            {
+                type: "section",
+                text: {
+                    type: "mrkdwn",
+                    text: "Publish a draft story for approval."
+                },
+                accessory: {
+                    type: "button",
+                    style: "primary",
+                    text: {
+                        type: "plain_text",
+                        text: "Publish",
+                        emoji: true
+                    },
+                    action_id: "publish-story-button"
+                }
             }
         ]
     }

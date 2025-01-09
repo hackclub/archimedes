@@ -1,24 +1,25 @@
 import type { Story } from "../../airtable";
+import type Slack from "@slack/bolt"
 
-export default (userId: string, story?: Story) => ({
-    type: "modal" as const,
+export default (userId: string, story?: Story): Slack.types.ModalView => ({
+    type: "modal",
     private_metadata: JSON.stringify({
         userId,
         storyId: story?.id
     }),
     callback_id: "submit-story-modal",
     title: {
-        type: "plain_text" as const,
+        type: "plain_text",
         text: story ? "Edit story" : "Submit a story",
         emoji: true
     },
     submit: {
-        type: "plain_text" as const,
+        type: "plain_text",
         text: "Submit",
         emoji: true
     },
     close: {
-        type: "plain_text" as const,
+        type: "plain_text",
         text: "Cancel",
         emoji: true
     },

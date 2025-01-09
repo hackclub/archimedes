@@ -7,6 +7,7 @@ import { richTextBlockToMrkdwn } from '../util';
 import notAReporter from "../blocks/appHome/notAReporter";
 import reporterHome from "../blocks/appHome/reporterHome";
 import storyModal from "../blocks/appHome/storyModal";
+import publishModal from "../blocks/appHome/publishModal";
 
 export default async (app: Slack.App) => {
     app.action("new-story-button", async ({ ack, client, body }) => {
@@ -27,6 +28,51 @@ export default async (app: Slack.App) => {
             view: storyModal(body.user.id, story),
         });
     });
+
+    app.action("publish-story-button", async ({ ack, client, body }) => {
+        await ack();
+        logger.debug(`(Publish Story) Fetching stories for ${body.user.id}`);
+        const stories = await db.scan(storiesTable, {
+            filterByFormula: `FIND("${body.user.id}", {slack_id_rollup}) > 0`,
+        })
+
+        await client.views.open({
+            trigger_id: (body as BlockAction).trigger_id,
+            view: publishModal(body.user.id, stories),
+        });
+    });
+
+    app.action("story-selector", async ({ ack }) => {
+        await ack();
+    });
+
+    app.view("publish-story-modal", async ({ ack, view, client }) => {
+        await ack();
+
+        const userId: string = view.private_metadata;
+        // FIXME: BAD BAD BAD. NO. NEIN. NICHT GUT.
+        // However, I want to get this working first.
+        // This is a band-aid.
+        // This is not good.
+        // Mahad, please fix this.
+        const storyId = view.state.values[Object.keys(view.state.values)[0]].select_input.selected_option!.value;
+        logger.debug(`(Publish Story) Updating story ${storyId}`);
+
+        logger.debug(`Fetching reporter for ${userId}`);
+        const reporter = (await db.scan(reportersTable, {
+            filterByFormula: `{slack_id} = "${userId}"`,
+        }))[0]
+
+        await db.update(storiesTable, {
+            id: storyId,
+            status: "Awaiting Review",
+        });
+
+        await client.views.publish({
+            user_id: userId,
+            view: await reporterHome(reporter.firstName, reporter.slackId),
+        });
+    })
 
     app.view("submit-story-modal", async ({ ack, view, client }) => {
         await ack();
@@ -70,8 +116,6 @@ export default async (app: Slack.App) => {
                 happenings: [],
             });
         }
-
-        logger.debug(`Headline: ${headline}`);
 
         await client.views.publish({
             user_id: userId,

@@ -1,5 +1,7 @@
+import type Slack from "@slack/bolt";
+
 export default {
-    type: "home" as const,
+    type: "home",
     blocks: [
         {
             type: "header",
@@ -17,4 +19,4 @@ export default {
             }
         }
     ]
-}
+} as Slack.types.HomeView
