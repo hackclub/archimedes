@@ -5,5 +5,6 @@ const Env = z.object({
     SLACK_APP_TOKEN: z.string(),
     AIRTABLE_API_KEY: z.string(),
     LOG_LEVEL: z.enum(["debug", "info", "warn", "error", "fatal"]).default("info"),
+    APPROVALS_CHANNEL_ID: z.string(),
 });
 export const env = Env.parse(process.env);

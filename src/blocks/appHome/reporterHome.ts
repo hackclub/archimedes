@@ -17,6 +17,7 @@ export default async (firstName: string, slackId: string) => {
             }
         }
     ] : stories.map(story => {
+        console.log(`*${story.headline}* _(${story.status})_\n${story.shortDescription}​`)
         return {
             type: "section",
             text: {

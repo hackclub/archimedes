@@ -1,10 +1,8 @@
 import type Slack from '@slack/bolt';
 import type { BlockAction } from '@slack/bolt';
-import logger from "../logger";
-import { db, reportersTable, storiesTable } from "../airtable"
 import { richTextBlockToMrkdwn } from '../util';
+import { draftStory, getReporterBySlackId } from '../data';
 
-import notAReporter from "../blocks/appHome/notAReporter";
 import reporterHome from "../blocks/appHome/reporterHome";
 import storyModal from "../blocks/appHome/storyModal";
 
@@ -22,24 +20,21 @@ export default (app: Slack.App) => {
 
         const userId = view.private_metadata;
         const headline = view.state.values.headline_input.headline.value!;
-        const shortDescription = richTextBlockToMrkdwn(view.state.values.short_description_input.short_description.rich_text_value!);
-        const longArticle = richTextBlockToMrkdwn(view.state.values.long_article_input.long_article.rich_text_value!);
+        const shortDescriptionRt = view.state.values.short_description_input.short_description.rich_text_value!;
+        const shortDescription = richTextBlockToMrkdwn(shortDescriptionRt);
+        const longArticleRt = view.state.values.long_article_input.long_article.rich_text_value!;
+        const longArticle = richTextBlockToMrkdwn(longArticleRt);
 
-        const reporter = (await db.scan(reportersTable, {
-            filterByFormula: `{slack_id} = "${userId}"`,
-        }))[0]
+        const reporter = await getReporterBySlackId(userId);
 
-        await db.insert(storiesTable, {
+        await draftStory({
             headline,
             shortDescription,
             longArticle,
-            authors: [reporter.id],
-            status: "Draft",
-            newsletters: [],
-            happenings: [],
+            reporterId: reporter.id,
+            shortDescriptionRt: JSON.stringify(shortDescriptionRt),
+            longArticleRt: JSON.stringify(longArticleRt),
         });
-
-        logger.info(`Headline: ${headline}`);
 
         await client.views.publish({
             user_id: userId,

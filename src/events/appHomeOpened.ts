@@ -2,6 +2,7 @@ import type Slack from '@slack/bolt';
 import type { BlockAction } from '@slack/bolt';
 import logger from "../logger";
 import { db, reportersTable, storiesTable } from "../airtable"
+import { draftStory, publishStory, updateStory, getReporterBySlackId } from "../data"
 import { richTextBlockToMrkdwn } from '../util';
 
 import notAReporter from "../blocks/appHome/notAReporter";
@@ -59,14 +60,9 @@ export default async (app: Slack.App) => {
         logger.debug(`(Publish Story) Updating story ${storyId}`);
 
         logger.debug(`Fetching reporter for ${userId}`);
-        const reporter = (await db.scan(reportersTable, {
-            filterByFormula: `{slack_id} = "${userId}"`,
-        }))[0]
+        const reporter = await getReporterBySlackId(userId);
 
-        await db.update(storiesTable, {
-            id: storyId,
-            status: "Awaiting Review",
-        });
+        await publishStory(storyId);
 
         await client.views.publish({
             user_id: userId,
@@ -88,32 +84,27 @@ export default async (app: Slack.App) => {
         const longArticle = richTextBlockToMrkdwn(longArticleRt);
 
         logger.debug(`Fetching reporter for ${userId}`);
-        const reporter = (await db.scan(reportersTable, {
-            filterByFormula: `{slack_id} = "${userId}"`,
-        }))[0]
+        const reporter = await getReporterBySlackId(userId);
 
         if (storyId) {
             logger.debug(`Updating story for ${userId} (${headline})`);
-            await db.update(storiesTable, {
-                id: storyId,
+            await updateStory(storyId, {
                 headline,
                 shortDescription,
                 longArticle,
                 shortDescriptionRt: JSON.stringify(shortDescriptionRt),
                 longArticleRt: JSON.stringify(longArticleRt),
+                reporterId: reporter.id
             });
         } else {
             logger.debug(`Inserting story for ${userId} (${headline})`);
-            await db.insert(storiesTable, {
+            await draftStory({
                 headline,
                 shortDescription,
                 longArticle,
                 shortDescriptionRt: JSON.stringify(shortDescriptionRt),
                 longArticleRt: JSON.stringify(longArticleRt),
-                authors: [reporter.id],
-                status: "Draft",
-                newsletters: [],
-                happenings: [],
+                reporterId: reporter.id
             });
         }
 
@@ -125,9 +116,7 @@ export default async (app: Slack.App) => {
 
     app.event("app_home_opened", async ({ event, client }) => {
         logger.debug(`Received app_home_opened event from ${event.user} - scanning for reporter`);
-        const reporter = (await db.scan(reportersTable, {
-            filterByFormula: `{slack_id} = "${event.user}"`,
-        }))[0];
+        const reporter = await getReporterBySlackId(event.user);
 
         if (!reporter) {
             logger.warn(`User ${event.user} is not a reporter - showing notAReporter view`);
