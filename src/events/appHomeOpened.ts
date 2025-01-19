@@ -2,7 +2,7 @@ import type Slack from '@slack/bolt';
 import type { BlockAction } from '@slack/bolt';
 import logger from "../logger";
 import { db, storiesTable } from "../airtable"
-import { draftStory, stageStory, updateStory, getReporterBySlackId } from "../data"
+import { draftStory, stageStory, updateStory, getReporterBySlackId, getStoriesByUserId } from "../data"
 import { richTextBlockToMrkdwn } from '../util';
 
 import notAReporter from "../blocks/appHome/notAReporter";
@@ -33,9 +33,7 @@ export default async (app: Slack.App) => {
     app.action("stage-story-button", async ({ ack, client, body }) => {
         await ack();
         logger.debug(`(Stage Story) Fetching stories for ${body.user.id}`);
-        const stories = await db.scan(storiesTable, {
-            filterByFormula: `FIND("${body.user.id}", {slack_id_rollup}) > 0`,
-        })
+        const stories = await getStoriesByUserId(body.user.id);
 
         await client.views.open({
             trigger_id: (body as BlockAction).trigger_id,

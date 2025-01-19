@@ -55,3 +55,10 @@ export async function getReporterBySlackId(slackId: string) {
         filterByFormula: `{slack_id} = "${slackId}"`,
     }))[0];
 }
+
+export async function getStoriesByUserId(userId: string) {
+    const stories = await db.scan(storiesTable);
+    // FIXME: this isn't very efficient - the ideal way to fix this would be to
+    // use `filterByFormula` on the `stories` table, but that doesn't work
+    return stories.filter(story => story.slackIdRollup.includes(userId));
+}

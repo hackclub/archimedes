@@ -1,4 +1,5 @@
 import { db, storiesTable } from "../../airtable"
+import { getStoriesByUserId } from "../../data";
 import logger from "../../logger";
 import type Slack from "@slack/bolt";
 
@@ -10,9 +11,7 @@ const sortMap = {
 }
 export default async (firstName: string, slackId: string) => {
     logger.debug(`Generating reporter home for ${firstName} (${slackId})`);
-    const stories = await db.scan(storiesTable, {
-        filterByFormula: `FIND("${slackId}", {slack_id_rollup}) > 0`,
-    })
+    const stories = await getStoriesByUserId(slackId);
 
     const storyBlocks = stories.length === 0 ? [
         {
