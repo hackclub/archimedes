@@ -1,27 +1,41 @@
 import type Slack from "@slack/bolt";
 import { db, storiesTable } from "../airtable";
+import { stageRequest } from "../blocks/approvals/stageRequest";
 import logger from "../logger";
+import { env } from "../env";
 
 export default function (app: Slack.App) {
-    app.action("approve-story", async ({ ack, client, body }) => {
+    app.action("approve-story", async ({ ack, client, body, respond }) => {
         await ack();
         const action = (body as Slack.BlockAction).actions[0] as Slack.ButtonAction;
         const storyId = action.value!;
         logger.debug(`Approving story ${storyId}`);
-        await db.update(storiesTable, {
+        const story = await db.update(storiesTable, {
             id: storyId,
             status: "Published",
         });
+        await client.chat.postMessage({
+            channel: env.APPROVALS_CHANNEL_ID,
+            ...stageRequest(story, "Published", body.user.id),
+        });
+        await respond({
+            ...stageRequest(story, "Published", body.user.id),
+            replace_original: true
+        })
     });
 
-    app.action("reject-story", async ({ ack, client, body }) => {
+    app.action("reject-story", async ({ ack, client, body, respond }) => {
         await ack();
         const action = (body as Slack.BlockAction).actions[0] as Slack.ButtonAction;
         const storyId = action.value!;
         logger.debug(`Rejecting story ${storyId}`);
-        await db.update(storiesTable, {
+        const story = await db.update(storiesTable, {
             id: storyId,
             status: "Draft",
         });
+        await respond({
+            ...stageRequest(story, "Rejected", body.user.id),
+            replace_original: true
+        })
     })
 };
