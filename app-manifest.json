@@ -7,6 +7,7 @@
     "features": {
         "app_home": {
             "home_tab_enabled": true,
+            "messages_tab_enabled": false,
             "messages_tab_read_only_enabled": false
         },
         "bot_user": {
@@ -34,6 +35,7 @@
         "interactivity": {
             "is_enabled": true
         },
+        "org_deploy_enabled": false,
         "socket_mode_enabled": true,
         "token_rotation_enabled": false
     }

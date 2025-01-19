@@ -44,7 +44,7 @@ export interface Story extends Item {
     longArticleRt: string,
     authors: string[],
     readonly authorsName: string[] | null,
-    status: "Draft" | "Awaiting Review" | "Published",
+    status: "Draft" | "Awaiting Review" | "Approved" | "Published",
     newsletters: string[],
     happenings: string[],
     readonly autonumber: number,

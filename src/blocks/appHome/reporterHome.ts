@@ -3,8 +3,9 @@ import logger from "../../logger";
 import type Slack from "@slack/bolt";
 
 const sortMap = {
-    "Draft": 3,
-    "Awaiting Review": 2,
+    "Draft": 4,
+    "Awaiting Review": 3,
+    "Approved": 2,
     "Published": 1
 }
 export default async (firstName: string, slackId: string) => {

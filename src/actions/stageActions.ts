@@ -12,9 +12,9 @@ export default function (app: Slack.App) {
         logger.debug(`Approving story ${storyId}`);
         const story = await db.update(storiesTable, {
             id: storyId,
-            status: "Published",
+            status: "Approved",
         });
-        await respond(stageRequest(story, "Published", body.user.id))
+        await respond(stageRequest(story, "Approved", body.user.id))
     });
 
     app.action("reject-story", async ({ ack, client, body, respond }) => {

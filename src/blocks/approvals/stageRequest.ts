@@ -1,6 +1,6 @@
 import type { Story } from "../../airtable";
 
-export function stageRequest(story: Story, status: "Awaiting Review" | "Published" | "Rejected" = "Awaiting Review", reviewerId?: string) {
+export function stageRequest(story: Story, status: "Awaiting Review" | "Approved" | "Rejected" = "Awaiting Review", reviewerId?: string) {
     const pfps = story.slackIdRollup.split(" ,").map(slackId => ({
         type: "image",
         image_url: `https://cachet.dunkirk.sh/users/${slackId}/r`,
