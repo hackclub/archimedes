@@ -16,7 +16,7 @@ export default async (firstName: string, slackId: string) => {
                 text: "No stories yet - get writing!"
             }
         }
-    ] : stories.map(story => {
+    ] : stories.sort((a, b) => b.autonumber - a.autonumber).map(story => {
         return {
             type: "section",
             text: {
