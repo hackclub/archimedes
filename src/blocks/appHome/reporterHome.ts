@@ -1,5 +1,6 @@
 import { db, storiesTable } from "../../airtable"
 import logger from "../../logger";
+import type Slack from "@slack/bolt";
 
 export default async (firstName: string, slackId: string) => {
     logger.debug(`Generating reporter home for ${firstName} (${slackId})`);
@@ -108,5 +109,5 @@ export default async (firstName: string, slackId: string) => {
                 }
             }
         ].filter(Boolean)
-    }
+    } as Slack.types.HomeView
 }
