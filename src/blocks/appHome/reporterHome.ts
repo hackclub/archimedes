@@ -17,7 +17,6 @@ export default async (firstName: string, slackId: string) => {
             }
         }
     ] : stories.map(story => {
-        console.log(`*${story.headline}* _(${story.status})_\n${story.shortDescription}​`)
         return {
             type: "section",
             text: {
@@ -34,7 +33,7 @@ export default async (firstName: string, slackId: string) => {
                 action_id: "edit-story-button",
                 value: story.id
             }
-        }
+        } as Slack.types.SectionBlock
     })
     const unpublishedStoriesCount = stories.filter(story => story.status === "Draft").length;
 
