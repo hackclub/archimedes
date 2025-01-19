@@ -11,21 +11,21 @@ export default (userId: string, stories: Story[]): Slack.types.ModalView => {
         value: story.id
     }));
     if (selectOptions.length === 0) {
-        throw new Error("No stories to publish");
+        throw new Error("No stories to stage");
     }
 
     return {
         type: "modal",
         private_metadata: userId,
-        callback_id: "publish-story-modal",
+        callback_id: "stage-story-modal",
         title: {
             type: "plain_text",
-            text: "Publish a story",
+            text: "Stage a story",
             emoji: true
         },
         submit: {
             type: "plain_text",
-            text: "Publish",
+            text: "Stage",
             emoji: true
         },
         close: {
@@ -50,7 +50,7 @@ export default (userId: string, stories: Story[]): Slack.types.ModalView => {
                 },
                 label: {
                     type: "plain_text",
-                    text: "Story being published",
+                    text: "Story being staged",
                     emoji: true
                 }
             } as Slack.types.InputBlock

@@ -1,4 +1,7 @@
-import { db, reportersTable, storiesTable } from "./airtable";
+import { db, reportersTable, storiesTable, type Story } from "./airtable";
+import { env } from "./env";
+import { stageRequest } from "./blocks/approvals/stageRequest";
+import type Slack from "@slack/bolt";
 
 export type Details = {
     headline: string,
@@ -9,11 +12,17 @@ export type Details = {
     reporterId: string
 };
 
-export async function publishStory(storyId: string) {
-    await db.update(storiesTable, {
-        id: storyId,
-        status: "Awaiting Review",
-    });
+export async function stageStory(client: Slack.webApi.WebClient, story: Story) {
+    await Promise.all([
+        db.update(storiesTable, {
+            id: story.id,
+            status: "Awaiting Review",
+        }),
+        client.chat.postMessage({
+            channel: env.APPROVALS_CHANNEL_ID,
+            ...stageRequest(story),
+        }),
+    ])
 }
 
 export async function draftStory(details: Details) {

@@ -4,6 +4,7 @@ import logger from "./logger";
 import { env } from "./env";
 
 import * as events from "./events";
+import * as actions from "./actions"
 
 const app = new App({
     token: env.SLACK_BOT_TOKEN,
@@ -14,6 +15,11 @@ const app = new App({
 for (const [name, event] of Object.entries(events)) {
     event(app);
     logger.info(`Registered event: ${name}`);
+}
+
+for (const [name, action] of Object.entries(actions)) {
+    action(app);
+    logger.info(`Registered action: ${name}`);
 }
 
 await app.start();

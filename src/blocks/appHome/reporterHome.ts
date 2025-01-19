@@ -95,17 +95,17 @@ export default async (firstName: string, slackId: string) => {
                 type: "section",
                 text: {
                     type: "mrkdwn",
-                    text: "Publish a draft story for approval."
+                    text: "Stage a draft story for approval."
                 },
                 accessory: {
                     type: "button",
                     style: "primary",
                     text: {
                         type: "plain_text",
-                        text: "Publish",
+                        text: "Stage",
                         emoji: true
                     },
-                    action_id: "publish-story-button"
+                    action_id: "stage-story-button"
                 }
             }
         ].filter(Boolean)

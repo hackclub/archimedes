@@ -1,14 +1,14 @@
 import type Slack from '@slack/bolt';
 import type { BlockAction } from '@slack/bolt';
 import logger from "../logger";
-import { db, reportersTable, storiesTable } from "../airtable"
-import { draftStory, publishStory, updateStory, getReporterBySlackId } from "../data"
+import { db, storiesTable } from "../airtable"
+import { draftStory, stageStory, updateStory, getReporterBySlackId } from "../data"
 import { richTextBlockToMrkdwn } from '../util';
 
 import notAReporter from "../blocks/appHome/notAReporter";
 import reporterHome from "../blocks/appHome/reporterHome";
 import storyModal from "../blocks/appHome/storyModal";
-import publishModal from "../blocks/appHome/publishModal";
+import stageModal from "../blocks/appHome/stageModal";
 
 export default async (app: Slack.App) => {
     app.action("new-story-button", async ({ ack, client, body }) => {
@@ -30,16 +30,16 @@ export default async (app: Slack.App) => {
         });
     });
 
-    app.action("publish-story-button", async ({ ack, client, body }) => {
+    app.action("stage-story-button", async ({ ack, client, body }) => {
         await ack();
-        logger.debug(`(Publish Story) Fetching stories for ${body.user.id}`);
+        logger.debug(`(Stage Story) Fetching stories for ${body.user.id}`);
         const stories = await db.scan(storiesTable, {
             filterByFormula: `FIND("${body.user.id}", {slack_id_rollup}) > 0`,
         })
 
         await client.views.open({
             trigger_id: (body as BlockAction).trigger_id,
-            view: publishModal(body.user.id, stories),
+            view: stageModal(body.user.id, stories),
         });
     });
 
@@ -47,7 +47,7 @@ export default async (app: Slack.App) => {
         await ack();
     });
 
-    app.view("publish-story-modal", async ({ ack, view, client }) => {
+    app.view("stage-story-modal", async ({ ack, view, client }) => {
         await ack();
 
         const userId: string = view.private_metadata;
@@ -57,12 +57,13 @@ export default async (app: Slack.App) => {
         // This is not good.
         // Mahad, please fix this.
         const storyId = view.state.values[Object.keys(view.state.values)[0]].select_input.selected_option!.value;
-        logger.debug(`(Publish Story) Updating story ${storyId}`);
+        const story = await db.get(storiesTable, storyId);
+        logger.debug(`(Stage Story) Updating story ${storyId}`);
 
         logger.debug(`Fetching reporter for ${userId}`);
         const reporter = await getReporterBySlackId(userId);
 
-        await publishStory(storyId);
+        await stageStory(client, story);
 
         await client.views.publish({
             user_id: userId,
