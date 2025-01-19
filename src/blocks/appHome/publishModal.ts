@@ -2,7 +2,7 @@ import type { Story } from "../../airtable";
 import type Slack from "@slack/bolt";
 
 export default (userId: string, stories: Story[]): Slack.types.ModalView => {
-    const selectOptions = stories.map(story => ({
+    const selectOptions = stories.filter(story => story.status === "Draft").map(story => ({
         text: {
             type: "plain_text",
             text: story.headline,
@@ -10,6 +10,9 @@ export default (userId: string, stories: Story[]): Slack.types.ModalView => {
         },
         value: story.id
     }));
+    if (selectOptions.length === 0) {
+        throw new Error("No stories to publish");
+    }
 
     return {
         type: "modal",

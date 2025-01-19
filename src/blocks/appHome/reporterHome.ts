@@ -34,6 +34,7 @@ export default async (firstName: string, slackId: string) => {
             }
         }
     })
+    const unpublishedStoriesCount = stories.filter(story => story.status === "Draft").length;
 
     return {
         type: "home" as const,
@@ -89,7 +90,7 @@ export default async (firstName: string, slackId: string) => {
                     action_id: "new-story-button"
                 }
             },
-            {
+            unpublishedStoriesCount > 0 && {
                 type: "section",
                 text: {
                     type: "mrkdwn",
@@ -106,6 +107,6 @@ export default async (firstName: string, slackId: string) => {
                     action_id: "publish-story-button"
                 }
             }
-        ]
+        ].filter(Boolean)
     }
 }
