@@ -14,14 +14,7 @@ export default function (app: Slack.App) {
             id: storyId,
             status: "Published",
         });
-        await client.chat.postMessage({
-            channel: env.APPROVALS_CHANNEL_ID,
-            ...stageRequest(story, "Published", body.user.id),
-        });
-        await respond({
-            ...stageRequest(story, "Published", body.user.id),
-            replace_original: true
-        })
+        await respond(stageRequest(story, "Published", body.user.id))
     });
 
     app.action("reject-story", async ({ ack, client, body, respond }) => {
@@ -33,9 +26,7 @@ export default function (app: Slack.App) {
             id: storyId,
             status: "Draft",
         });
-        await respond({
-            ...stageRequest(story, "Rejected", body.user.id),
-            replace_original: true
-        })
+        await respond(stageRequest(story, "Rejected", body.user.id))
+
     })
 };
