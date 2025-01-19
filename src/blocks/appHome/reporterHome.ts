@@ -2,6 +2,11 @@ import { db, storiesTable } from "../../airtable"
 import logger from "../../logger";
 import type Slack from "@slack/bolt";
 
+const sortMap = {
+    "Draft": 3,
+    "Awaiting Review": 2,
+    "Published": 1
+}
 export default async (firstName: string, slackId: string) => {
     logger.debug(`Generating reporter home for ${firstName} (${slackId})`);
     const stories = await db.scan(storiesTable, {
@@ -16,7 +21,7 @@ export default async (firstName: string, slackId: string) => {
                 text: "No stories yet - get writing!"
             }
         }
-    ] : stories.sort((a, b) => b.autonumber - a.autonumber).map(story => {
+    ] : stories.sort((a, b) => sortMap[b.status] - sortMap[a.status]).map(story => {
         return {
             type: "section",
             text: {
