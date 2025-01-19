@@ -1,7 +1,7 @@
 import type { Story } from "../../airtable";
 
 export function stageRequest(story: Story, status: "Awaiting Review" | "Approved" | "Rejected" = "Awaiting Review", reviewerId?: string) {
-    const pfps = story.slackIdRollup.split(" ,").map(slackId => ({
+    const pfps = story.slackIdRollup.map(slackId => ({
         type: "image",
         image_url: `https://cachet.dunkirk.sh/users/${slackId}/r`,
         alt_text: `@${slackId} avatar`

@@ -48,7 +48,7 @@ export interface Story extends Item {
     newsletters: string[],
     happenings: string[],
     readonly autonumber: number,
-    readonly slackIdRollup: string,
+    readonly slackIdRollup: string[],
 }
 
 export const storiesTable: Table<Story> = {
@@ -69,7 +69,7 @@ export const storiesTable: Table<Story> = {
         newsletters: 'string[]',
         happenings: 'string[]',
         autonumber: 'number',
-        slackIdRollup: 'string',
+        slackIdRollup: 'string[]',
     },
 };
 

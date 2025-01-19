@@ -52,6 +52,6 @@ export async function updateStory(storyId: string, details: Details) {
 
 export async function getReporterBySlackId(slackId: string) {
     return (await db.scan(reportersTable, {
-        filterByFormula: `{Slack ID} = "${slackId}"`,
+        filterByFormula: `{slack_id} = "${slackId}"`,
     }))[0];
 }

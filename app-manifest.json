@@ -7,13 +7,20 @@
     "features": {
         "app_home": {
             "home_tab_enabled": true,
-            "messages_tab_enabled": false,
+            "messages_tab_enabled": true,
             "messages_tab_read_only_enabled": false
         },
         "bot_user": {
             "display_name": "Archimedes",
             "always_online": true
-        }
+        },
+        "slash_commands": [
+            {
+                "command": "/arch-publish",
+                "description": "Publish a #happenings post and send out the newsletter",
+                "should_escape": false
+            }
+        ]
     },
     "oauth_config": {
         "scopes": {
@@ -21,7 +28,11 @@
                 "chat:write",
                 "channels:history",
                 "users:read",
-                "users:read.email"
+                "users:read.email",
+                "commands",
+                "groups:write",
+                "im:write",
+                "mpim:write"
             ]
         }
     },
