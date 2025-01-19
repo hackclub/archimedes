@@ -5,18 +5,20 @@ import logger from "../logger";
 import { env } from "../env";
 
 async function sendResponseMessage(story: Story, type: "Approved" | "Rejected", client: Slack.webApi.WebClient) {
-    const message = type === "Approved" ? `Your story *${story.headline}* has been approved! :yay:\nExpect to see it in the next issue.` : `Your story *${story.headline}* has been rejected :blob_sad:\nPlease edit your story and try again.`;
-    console.log(`Sending message: ${message}`);
-    for (const userId of story.slackIdRollup) {
-        logger.debug(`Sending message to ${userId}`);
-        const response = await client.chat.postMessage({
-            channel: userId,
-            text: message
-        })
-        if (!response.ok) {
-            logger.error(`Failed to send message to ${userId}: ${response.error}`)
-        }
+    logger.debug(`Sending response message to ${story.slackIdRollup.length} author(s) for story ${story.headline} (${story.id})`)
+    const convo = await client.conversations.open({
+        users: story.slackIdRollup.join(",")
+    });
+    if (!convo.ok) {
+        logger.error(`Error opening conversation: ${convo.error}`);
+        return;
     }
+    const message = type === "Approved" ? `Your story ${story.headline} has been approved! :yay:\nExpect to see it in the next issue.` : `Your story ${story.headline} has been rejected :blob_sad:\nPlease edit your story and try again.`;
+    await client.chat.postMessage({
+        channel: convo.channel!.id!,
+        as_user: true,
+        text: message
+    });
 }
 
 export default function (app: Slack.App) {
