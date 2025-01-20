@@ -45,11 +45,19 @@ export default function (app: Slack.App) {
             filterByFormula: `{status} = "Approved"`
         });
 
+        const userDetails = await client.users.info({
+            user: body.user.id
+        });
+
         await client.chat.postMessage({
             channel: env.HAPPENINGS_CHANNEL_ID,
+            icon_url: userDetails.user?.profile?.image_original,
+            username: userDetails.user?.profile?.display_name || userDetails.user?.name || "Archimedes",
+            unfurl_links: false,
+            unfurl_media: false,
             ...buildHappeningsMessage(
                 "Welcome back to #happenings, the weekly newsletter which is now 10 weeks old! Enjoy this double-digit edition :).",
-                "P.S. Send me a DM if you have cool community-oriented stuff, I.e. active YSWS, which you want featured (Tenth edition :yay: - Written by @Felix Gao, revised by @radioblahaj",
+                "P.S. Send me a DM if you have cool community-oriented stuff, I.e. active YSWS, which you want featured\n(Tenth edition :yay: - Written by @Felix Gao, revised by @radioblahaj",
                 approvedStories
             )
         });
