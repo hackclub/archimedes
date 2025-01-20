@@ -30,7 +30,50 @@ export default (stories: Story[]): Slack.types.ModalView => {
                 type: "section",
                 text: {
                     type: "mrkdwn",
-                    text: `*${approvedStories.length}* stories will be published as a #happenings message and as an email. Would you like to continue?`
+                    text: `*${approvedStories.length}* ${approvedStories.length === 1 ? "story" : "stories"} will be published as a #happenings message and as an email.`
+                }
+            },
+            {
+                type: "input",
+                block_id: "subject_input",
+                element: {
+                    type: "plain_text_input",
+                    action_id: "subject",
+                    placeholder: {
+                        type: "plain_text",
+                        text: "e.g. Happenings Issue #25"
+                    },
+                },
+                label: {
+                    type: "plain_text",
+                    text: "Subject",
+                    emoji: true
+                }
+            },
+            {
+                type: "input",
+                block_id: "intro_input",
+                element: {
+                    type: "rich_text_input",
+                    action_id: "intro",
+                },
+                label: {
+                    type: "plain_text",
+                    text: "Intro",
+                    emoji: true
+                }
+            },
+            {
+                type: "input",
+                block_id: "conclusion_input",
+                element: {
+                    type: "rich_text_input",
+                    action_id: "conclusion",
+                },
+                label: {
+                    type: "plain_text",
+                    text: "Conclusion",
+                    emoji: true
                 }
             },
         ]

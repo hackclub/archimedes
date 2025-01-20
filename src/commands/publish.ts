@@ -1,11 +1,12 @@
 import { getReporterBySlackId, getStoriesByUserId } from "../data";
 import { db, storiesTable } from "../airtable";
 import { render } from "@react-email/components";
+import { env } from "../env";
+import { richTextBlockToMrkdwn } from "../util";
 import type Slack from "@slack/bolt";
 import Email from "../emails/newsletterEmail";
 import publishModal from "../blocks/publishing/publishModal";
 import buildHappeningsMessage from "../blocks/publishing/happeningsMessage";
-import { env } from "../env";
 import Plunk from "@plunk/node";
 import logger from "../logger";
 
@@ -37,9 +38,13 @@ export default function (app: Slack.App) {
         });
     });
 
-    app.view("publish-story-modal", async ({ ack, client, body }) => {
+    app.view("publish-story-modal", async ({ ack, client, body, view }) => {
         await ack();
         logger.debug({ requestedBy: body.user.id }, "Processing publish-story-modal");
+
+        const subject = view.state.values.subject_input.subject.value!;
+        const introRt = view.state.values.intro_input.intro.rich_text_value!;
+        const conclusionRt = view.state.values.conclusion_input.conclusion.rich_text_value!;
 
         const approvedStories = await db.scan(storiesTable, {
             filterByFormula: `{status} = "Approved"`
@@ -56,8 +61,8 @@ export default function (app: Slack.App) {
             unfurl_links: false,
             unfurl_media: false,
             ...buildHappeningsMessage(
-                "Welcome back to #happenings, the weekly newsletter which is now 10 weeks old! Enjoy this double-digit edition :).",
-                "P.S. Send me a DM if you have cool community-oriented stuff, I.e. active YSWS, which you want featured\n(Tenth edition :yay: - Written by @Felix Gao, revised by @radioblahaj",
+                richTextBlockToMrkdwn(introRt),
+                richTextBlockToMrkdwn(conclusionRt),
                 approvedStories
             )
         });
