@@ -2,15 +2,8 @@ import type { Story } from "../../airtable";
 import type Slack from "@slack/bolt";
 
 export default (stories: Story[]): Slack.types.ModalView => {
-    const selectOptions = stories.filter(story => story.status === "Approved").map(story => ({
-        text: {
-            type: "plain_text",
-            text: story.headline,
-            emoji: true
-        },
-        value: story.id
-    }));
-    if (selectOptions.length === 0) {
+    const approvedStories = stories.filter(story => story.status === "Approved");
+    if (approvedStories.length === 0) {
         throw new Error("No stories to publish");
     }
 
@@ -37,9 +30,9 @@ export default (stories: Story[]): Slack.types.ModalView => {
                 type: "section",
                 text: {
                     type: "mrkdwn",
-                    text: "The selected stories will be published as a #happenings message and as an email. Would you like to continue?"
+                    text: `*${approvedStories.length}* stories will be published as a #happenings message and as an email. Would you like to continue?`
                 }
-            }
+            },
         ]
     };
 }

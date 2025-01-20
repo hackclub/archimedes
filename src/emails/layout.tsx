@@ -8,7 +8,7 @@ function Preview() {
         </>
     )
 }
-export default function Email({ children }: { children: React.ReactNode } = { children: <Preview /> }) {
+export default function Layout({ children }: { children: React.ReactNode } = { children: <Preview /> }) {
     return (
         <Html lang="en">
             <Head>
