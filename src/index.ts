@@ -28,17 +28,17 @@ const app = new App({
 
 for (const [name, event] of Object.entries(events)) {
     event(app);
-    logger.info(`Registered event: ${name}`);
+    logger.debug(`Registered event: ${name}`);
 }
 
 for (const [name, action] of Object.entries(actions)) {
     action(app);
-    logger.info(`Registered action: ${name}`);
+    logger.debug(`Registered action: ${name}`);
 }
 
 for (const [name, command] of Object.entries(commands)) {
     command(app);
-    logger.info(`Registered command: ${name}`);
+    logger.debug(`Registered command: ${name}`);
 }
 
 await app.start();

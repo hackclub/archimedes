@@ -1,6 +1,15 @@
 import pino from "pino";
 import { env } from "./env";
 
-export default pino({
-    level: env.LOG_LEVEL
-})
+const transport = pino.transport({
+    targets: [
+        { target: "pino/file", level: env.LOG_LEVEL },
+        {
+            target: "@logtail/pino",
+            options: { sourceToken: env.BETTER_STACK_SOURCE_TOKEN },
+            level: env.LOG_LEVEL
+        }
+    ]
+});
+
+export default pino(transport)

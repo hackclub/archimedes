@@ -1,5 +1,6 @@
 import type { Story } from "../../airtable";
 import type Slack from "@slack/bolt";
+import logger from "../../logger";
 
 export default (userId: string, stories: Story[]): Slack.types.ModalView => {
     const selectOptions = stories.filter(story => story.status === "Draft").map(story => ({
@@ -11,7 +12,7 @@ export default (userId: string, stories: Story[]): Slack.types.ModalView => {
         value: story.id
     }));
     if (selectOptions.length === 0) {
-        throw new Error("No stories to stage");
+        throw logger.error("No stories to stage");
     }
 
     return {
