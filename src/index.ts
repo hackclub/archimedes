@@ -6,11 +6,24 @@ import { env } from "./env";
 import * as events from "./events";
 import * as actions from "./actions"
 import * as commands from "./commands"
+import type { LogLevel } from '@slack/bolt';
 
 const app = new App({
     token: env.SLACK_BOT_TOKEN,
     appToken: env.SLACK_APP_TOKEN,
     socketMode: true,
+    logger: {
+        // Cannot spread due to https://github.com/pinojs/pino/issues/545
+        debug: (args) => logger.debug(args),
+        info: (args) => logger.info(args),
+        warn: (args) => logger.warn(args),
+        error: (args) => logger.error(args),
+        setLevel: (level: string) => {
+            logger.level = level
+        },
+        getLevel: () => logger.level as LogLevel,
+        setName: () => { }
+    }
 });
 
 for (const [name, event] of Object.entries(events)) {
