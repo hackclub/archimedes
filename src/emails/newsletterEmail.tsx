@@ -7,12 +7,17 @@ import { toHTML as unwrappedMrkdwnToHTML } from 'slack-markdown'
 interface Props {
     intro: string;
     conclusion: string;
-    stories: Story[]
+    stories: Story[];
+    userIdToName: (userId: string) => Promise<string>;
 }
 
-const mrkdwnToHTML = (mrkdwn: string, largeText = false) => {
+const mrkdwnToHTML = async (mrkdwn: string, userIdToName: (userId: string) => Promise<string>, largeText = false) => {
     const rawHtml = unwrappedMrkdwnToHTML(mrkdwn, {
         hrefTarget: "_blank",
+        slackCallbacks: {
+            user: async ({ id }: { id: string }) => `<a href="https://hackclub.slack.com/team/${id}" target="_blank">@${await userIdToName(id)}</a>`,
+            // channel: async ({ id }: { id: string }) => `<a href="https://hackclub.slack.com/archives/${id}" target="_blank">@${await userIdToName(id)}</a>`,
+        }
     });
     const imageSize = largeText ? 26 : 22;
     return rawHtml.replace(/:([A-Za-z0-9_-]*):/g, (_, emojiName) => `
@@ -26,15 +31,15 @@ const mrkdwnToHTML = (mrkdwn: string, largeText = false) => {
     `);
 }
 
-export default function Email({ intro, conclusion, stories }: Props) {
-    const introHtml = mrkdwnToHTML(intro);
+export default function Email({ intro, conclusion, stories, userIdToName }: Props) {
+    const introHtml = mrkdwnToHTML(intro, userIdToName);
     const mappedStories = stories.map(story => ({
         ...story,
-        headline: mrkdwnToHTML(story.headline, true),
-        longArticle: mrkdwnToHTML(story.longArticle)
+        headline: mrkdwnToHTML(story.headline, userIdToName, true),
+        longArticle: mrkdwnToHTML(story.longArticle, userIdToName)
     }));
 
-    const conclusionHtml = mrkdwnToHTML(conclusion);
+    const conclusionHtml = mrkdwnToHTML(conclusion, userIdToName);
     return (
         <Layout>
             <style>
