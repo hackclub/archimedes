@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "LOG_LEVEL=debug bun --watch . | pino-pretty",
-    "dev:with-emails": "bun run dev & email dev --dir src/emails",
+    "dev:emails": "email dev --dir src/emails",
     "lint": "biome lint",
     "pino-pretty": "pino-pretty"
   },

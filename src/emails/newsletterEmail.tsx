@@ -10,17 +10,18 @@ interface Props {
     stories: Story[]
 }
 
-const mrkdwnToHTML = (mrkdwn: string) => {
+const mrkdwnToHTML = (mrkdwn: string, largeText = false) => {
     const rawHtml = unwrappedMrkdwnToHTML(mrkdwn, {
         hrefTarget: "_blank",
     });
+    const imageSize = largeText ? 26 : 22;
     return rawHtml.replace(/:([A-Za-z0-9_-]*):/g, (_, emojiName) => `
         <img
             src="https://cachet.dunkirk.sh/emojis/${emojiName}/r"
-            height="22"
-            width="22"
+            height="${imageSize}"
+            width="${imageSize}"
             style="vertical-align: baseline; height: auto; position: relative; overflow: visible; align-items: center; display: inline-flex;"
-            alt="${emojiName} emoji"
+            alt=":${emojiName}: emoji"
         />
     `);
 }
@@ -29,7 +30,7 @@ export default function Email({ intro, conclusion, stories }: Props) {
     const introHtml = mrkdwnToHTML(intro);
     const mappedStories = stories.map(story => ({
         ...story,
-        headline: mrkdwnToHTML(story.headline),
+        headline: mrkdwnToHTML(story.headline, true),
         longArticle: mrkdwnToHTML(story.longArticle)
     }));
 
