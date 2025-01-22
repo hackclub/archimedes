@@ -7,6 +7,7 @@ const Env = z.object({
     PLUNK_API_KEY: z.string(),
     LOG_LEVEL: z.enum(["debug", "info", "warn", "error", "fatal"]).default("info"),
     APPROVALS_CHANNEL_ID: z.string(),
-    HAPPENINGS_CHANNEL_ID: z.string()
+    HAPPENINGS_CHANNEL_ID: z.string(),
+    NODE_ENV: z.enum(["development", "production"])
 });
 export const env = Env.parse(process.env);

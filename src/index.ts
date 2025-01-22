@@ -26,6 +26,10 @@ const app = new App({
     }
 });
 
+if (env.NODE_ENV === "development") {
+    logger.warn("Running in development mode");
+}
+
 for (const [name, event] of Object.entries(events)) {
     event(app);
     logger.info(`Registered event: ${name}`);

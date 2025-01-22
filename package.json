@@ -21,13 +21,13 @@
   },
   "dependencies": {
     "@fontsource/inter": "^5.1.1",
-    "@plunk/node": "^3.0.3",
     "@react-email/components": "0.0.32",
     "@slack/bolt": "^4.2.0",
     "airtable-ts": "^1.4.0",
     "pino": "^9.6.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "slack-markdown": "^0.3.0",
     "zod": "^3.24.1",
     "zod-validation-error": "^3.4.0"
   },

@@ -21,7 +21,7 @@ const ZAirtableJsonSchema = z.object({
     newsletters: tableInfo,
     happenings: tableInfo,
 });
-const airtableJson = await ZAirtableJsonSchema.safeParseAsync(JSON.parse(await readFile('./airtable.json', 'utf-8')));
+export const airtableJson = await ZAirtableJsonSchema.safeParseAsync(JSON.parse(await readFile('./airtable.json', 'utf-8')));
 if (airtableJson.error) {
     const error = fromError(airtableJson.error);
     logger.fatal(`Failed to parse airtable.json: ${error.message}`);
