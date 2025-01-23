@@ -8,10 +8,10 @@ interface Props {
     intro: string;
     conclusion: string;
     stories: Story[];
-    userIdToName: (userId: string) => string;
+    userIdToName: (slackId: string) => string;
 }
 
-const mrkdwnToHTML = (mrkdwn: string, userIdToName: (userId: string) => string, largeText = false) => {
+const mrkdwnToHTML = (mrkdwn: string, userIdToName: (slackId: string) => string, largeText = false) => {
     const rawHtml = unwrappedMrkdwnToHTML(mrkdwn, {
         hrefTarget: "_blank",
         slackCallbacks: {

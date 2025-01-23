@@ -1,4 +1,5 @@
 import { getReporterBySlackId, getStoriesByUserId } from "../data";
+import { synchronouslyGetProfileBySlackId } from "../sync"
 import { db, storiesTable, airtableJson, type Story } from "../airtable";
 import { render } from "@react-email/components";
 import { env } from "../env";
@@ -50,7 +51,7 @@ export default function (app: Slack.App) {
 
         await Promise.allSettled([
             sendHappeningsMessage(client, body.user.id, approvedStories, introMd, conclusionMd),
-            sendNewsletter(body.user.id, approvedStories, subject, introMd, conclusionMd, client)
+            sendNewsletter(body.user.id, approvedStories, subject, introMd, conclusionMd)
         ]);
     })
 }
@@ -74,9 +75,9 @@ async function sendHappeningsMessage(client: Slack.webApi.WebClient, userId: str
     });
 }
 
-async function sendNewsletter(userId: string, stories: Story[], subject: string, introMd: string, conclusionMd: string, client: Slack.webApi.WebClient) {
+async function sendNewsletter(userId: string, stories: Story[], subject: string, introMd: string, conclusionMd: string) {
     const emailHtml = await render(Email({
-        intro: introMd, conclusion: conclusionMd, stories, userIdToName: (userId: string) => `@${userId}`
+        intro: introMd, conclusion: conclusionMd, stories, userIdToName: synchronouslyGetProfileBySlackId
     }));
     logger.debug({ requestedBy: userId }, "Sending newsletter");
 
