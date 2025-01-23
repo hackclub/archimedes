@@ -77,16 +77,7 @@ async function sendHappeningsMessage(client: Slack.webApi.WebClient, userId: str
 async function sendNewsletter(userId: string, stories: Story[], subject: string, introMd: string, conclusionMd: string, client: Slack.webApi.WebClient) {
     const displayNamesCache: Record<string, string> = {}; // TODO: probably want a global TTL cache for this
     const emailHtml = await render(Email({
-        intro: introMd, conclusion: conclusionMd, stories, userIdToName: async (userId: string) => {
-            if (displayNamesCache[userId]) {
-                return displayNamesCache[userId];
-            }
-            const profile = await client.users.profile.get({
-                user: userId
-            });
-            displayNamesCache[userId] = profile?.profile?.display_name || profile?.profile?.real_name || userId;
-            return displayNamesCache[userId];
-        }
+        intro: introMd, conclusion: conclusionMd, stories, userIdToName: (userId: string) => "skyfall"
     }));
     logger.debug({ requestedBy: userId }, "Sending newsletter");
 

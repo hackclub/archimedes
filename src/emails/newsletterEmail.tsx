@@ -9,10 +9,10 @@ interface Props {
     intro: string;
     conclusion: string;
     stories: Story[];
-    userIdToName: (userId: string) => Promise<string>;
+    userIdToName: (userId: string) => string;
 }
 
-const mrkdwnToHTML = async (mrkdwn: string, userIdToName: (userId: string) => Promise<string>, largeText = false) => {
+const mrkdwnToHTML = (mrkdwn: string, userIdToName: (userId: string) => string, largeText = false) => {
     const rawHtml = unwrappedMrkdwnToHTML(mrkdwn, {
         hrefTarget: "_blank",
         slackCallbacks: {
@@ -32,22 +32,21 @@ const mrkdwnToHTML = async (mrkdwn: string, userIdToName: (userId: string) => Pr
                 alt=":${emojiName}: emoji"
             />
         `)
-    const displayNamePass = await replaceAsync(emojiPass, /__USER__([A-Z0-9]*)__USER__/g, async (matches) => {
-        const userId = matches[1];
-        return `<a href="https://hackclub.slack.com/team/${userId}" target="_blank">${await userIdToName(userId)}</a>`
+    const displayNamePass = emojiPass.replace(/__USER__([A-Z0-9]*)__USER__/g, (_, userId) => {
+        return `<a href="https://hackclub.slack.com/team/${userId}" target="_blank">${userIdToName(userId)}</a>`
     })
     return displayNamePass
 }
 
-export default async function Email({ intro, conclusion, stories, userIdToName }: Props) {
-    const introHtml = await mrkdwnToHTML(intro, userIdToName);
-    const mappedStories = await Promise.all(stories.map(async (story) => ({
+export default function Email({ intro, conclusion, stories, userIdToName }: Props) {
+    const introHtml = mrkdwnToHTML(intro, userIdToName);
+    const mappedStories = stories.map((story) => ({
         ...story,
-        headline: await mrkdwnToHTML(story.headline, userIdToName, true),
-        longArticle: await mrkdwnToHTML(story.longArticle, userIdToName)
-    })));
+        headline: mrkdwnToHTML(story.headline, userIdToName, true),
+        longArticle: mrkdwnToHTML(story.longArticle, userIdToName)
+    }));
 
-    const conclusionHtml = await mrkdwnToHTML(conclusion, userIdToName);
+    const conclusionHtml = mrkdwnToHTML(conclusion, userIdToName);
     return (
         <Layout>
             <style>
