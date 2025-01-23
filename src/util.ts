@@ -86,3 +86,11 @@ export const richTextBlockToMrkdwn = (richTextBlock: Slack.types.RichTextBlock) 
 
     return mrkdwn
 }
+
+export async function replaceAsync(string: string, regexp: RegExp, replacerFunction: (match: string[]) => Promise<string>) {
+    const replacements = await Promise.all(
+        Array.from(string.matchAll(regexp),
+            match => replacerFunction(match)));
+    let i = 0;
+    return string.replace(regexp, () => replacements[i++]);
+}

@@ -1,5 +1,4 @@
 import { getReporterBySlackId, getStoriesByUserId } from "../data";
-import { synchronouslyGetProfileBySlackId } from "../sync"
 import { db, storiesTable, airtableJson, type Story } from "../airtable";
 import { render } from "@react-email/components";
 import { env } from "../env";
@@ -51,7 +50,7 @@ export default function (app: Slack.App) {
 
         await Promise.allSettled([
             sendHappeningsMessage(client, body.user.id, approvedStories, introMd, conclusionMd),
-            sendNewsletter(body.user.id, approvedStories, subject, introMd, conclusionMd)
+            sendNewsletter(body.user.id, approvedStories, subject, introMd, conclusionMd, client)
         ]);
     })
 }
@@ -75,9 +74,19 @@ async function sendHappeningsMessage(client: Slack.webApi.WebClient, userId: str
     });
 }
 
-async function sendNewsletter(userId: string, stories: Story[], subject: string, introMd: string, conclusionMd: string) {
+async function sendNewsletter(userId: string, stories: Story[], subject: string, introMd: string, conclusionMd: string, client: Slack.webApi.WebClient) {
+    const displayNamesCache: Record<string, string> = {}; // TODO: probably want a global TTL cache for this
     const emailHtml = await render(Email({
-        intro: introMd, conclusion: conclusionMd, stories, userIdToName: synchronouslyGetProfileBySlackId
+        intro: introMd, conclusion: conclusionMd, stories, userIdToName: async (userId: string) => {
+            if (displayNamesCache[userId]) {
+                return displayNamesCache[userId];
+            }
+            const profile = await client.users.profile.get({
+                user: userId
+            });
+            displayNamesCache[userId] = profile?.profile?.display_name || profile?.profile?.real_name || userId;
+            return displayNamesCache[userId];
+        }
     }));
     logger.debug({ requestedBy: userId }, "Sending newsletter");
 
