@@ -75,16 +75,8 @@ async function sendHappeningsMessage(client: Slack.webApi.WebClient, userId: str
 }
 
 async function sendNewsletter(userId: string, stories: Story[], subject: string, introMd: string, conclusionMd: string, client: Slack.webApi.WebClient) {
-    const namesCache: Record<string, string> = {};
     const emailHtml = await render(Email({
-        intro: introMd, conclusion: conclusionMd, stories, userIdToName: async (userId: string) => {
-            if (namesCache[userId]) return namesCache[userId];
-            const userDetails = await client.users.info({
-                user: userId
-            });
-            namesCache[userId] = userDetails.user?.profile?.display_name || userDetails.user?.name || userId;
-            return namesCache[userId];
-        }
+        intro: introMd, conclusion: conclusionMd, stories, userIdToName: (userId: string) => `@${userId}`
     }));
     logger.debug({ requestedBy: userId }, "Sending newsletter");
 

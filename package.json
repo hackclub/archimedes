@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@fontsource/inter": "^5.1.1",
+    "@isaacs/ttlcache": "^1.4.1",
     "@react-email/components": "0.0.32",
     "@slack/bolt": "^4.2.0",
     "airtable-ts": "^1.4.0",

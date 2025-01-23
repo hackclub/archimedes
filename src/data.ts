@@ -1,7 +1,9 @@
-import { db, reportersTable, storiesTable, type Story } from "./airtable";
+import { db, reportersTable, storiesTable, type Reporter, type Story } from "./airtable";
 import { env } from "./env";
 import { stageRequest } from "./blocks/approvals/stageRequest";
 import type Slack from "@slack/bolt";
+import TTLCache from "@isaacs/ttlcache";
+import logger from "./logger";
 
 export type Details = {
     headline: string,
@@ -50,10 +52,19 @@ export async function updateStory(storyId: string, details: Details) {
     });
 }
 
+// Cache for 1 hour
+const reportersCache = new TTLCache({ ttl: 60 * 60 * 1000 })
 export async function getReporterBySlackId(slackId: string) {
-    return (await db.scan(reportersTable, {
+    const cacheResponse = reportersCache.get(slackId);
+    if (cacheResponse) return cacheResponse as Reporter;
+
+    const reporter = (await db.scan(reportersTable, {
         filterByFormula: `{slack_id} = "${slackId}"`,
-    }))[0];
+    }))[0] as Reporter | undefined;
+    if (!reporter) return;
+
+    reportersCache.set(slackId, reporter);
+    return reporter;
 }
 
 export async function getStoriesByUserId(userId: string) {

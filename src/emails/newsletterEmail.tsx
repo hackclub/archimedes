@@ -8,14 +8,14 @@ interface Props {
     intro: string;
     conclusion: string;
     stories: Story[];
-    userIdToName: (userId: string) => Promise<string>;
+    userIdToName: (userId: string) => string;
 }
 
-const mrkdwnToHTML = async (mrkdwn: string, userIdToName: (userId: string) => Promise<string>, largeText = false) => {
+const mrkdwnToHTML = (mrkdwn: string, userIdToName: (userId: string) => string, largeText = false) => {
     const rawHtml = unwrappedMrkdwnToHTML(mrkdwn, {
         hrefTarget: "_blank",
         slackCallbacks: {
-            user: async ({ id }: { id: string }) => `<a href="https://hackclub.slack.com/team/${id}" target="_blank">@${await userIdToName(id)}</a>`,
+            user: ({ id }: { id: string }) => `<a href="https://hackclub.slack.com/team/${id}" target="_blank">@${userIdToName(id)}</a>`,
             // channel: async ({ id }: { id: string }) => `<a href="https://hackclub.slack.com/archives/${id}" target="_blank">@${await userIdToName(id)}</a>`,
         }
     });
