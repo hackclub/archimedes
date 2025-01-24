@@ -31,14 +31,14 @@ export default (app: Slack.App) => {
             headline,
             shortDescription,
             longArticle,
-            reporterId: reporter.id,
+            reporterId: reporter!.id,
             shortDescriptionRt: JSON.stringify(shortDescriptionRt),
             longArticleRt: JSON.stringify(longArticleRt),
         });
 
         await client.views.publish({
             user_id: userId,
-            view: await reporterHome(reporter.firstName, reporter.slackId),
+            view: await reporterHome(reporter!.firstName, reporter!.slackId),
         });
     })
 }
