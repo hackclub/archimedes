@@ -3,6 +3,7 @@ import { env } from "./env";
 import { stageRequest } from "./blocks/approvals/stageRequest";
 import type Slack from "@slack/bolt";
 import TTLCache from "@isaacs/ttlcache";
+import logger from "./logger";
 
 export type Details = {
     headline: string,
@@ -78,10 +79,25 @@ export async function getDisplayNameBySlackId(slackId: string, client: Slack.web
     const cacheResponse = displayNamesCache.get(slackId);
     if (cacheResponse) return cacheResponse as string;
 
-    const user = (await client.users.info({
+    const user = await client.users.info({
         user: slackId
-    }));
+    });
     const displayName = user.user?.profile?.display_name || user.user?.name || "Archimedes";
     displayNamesCache.set(slackId, displayName);
     return displayName;
+}
+
+const channelNamesCache = new TTLCache({ ttl: 60 * 60 * 1000 })
+export async function getChannelNameById(channelId: string, client: Slack.webApi.WebClient) {
+    const cacheResponse = channelNamesCache.get(channelId);
+    if (cacheResponse) return cacheResponse as string;
+
+    const channel = await client.conversations.info({
+        channel: channelId
+    });
+
+    const channelName = channel.channel?.name;
+    if (channelName) channelNamesCache.set(channelId, channelName);
+
+    return channelName || channelId;
 }

@@ -27,6 +27,7 @@
             "bot": [
                 "chat:write",
                 "chat:write.customize",
+                "channels:read",
                 "channels:history",
                 "users:read",
                 "users:read.email",

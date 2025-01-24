@@ -10,4 +10,4 @@ const Env = z.object({
     HAPPENINGS_CHANNEL_ID: z.string(),
     NODE_ENV: z.enum(["development", "production"])
 });
-export const env = Env.parse(process.env);
+export const env = Object.freeze(Env.parse(process.env));

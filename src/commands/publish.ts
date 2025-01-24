@@ -1,4 +1,4 @@
-import { getDisplayNameBySlackId, getReporterBySlackId, getStoriesByUserId } from "../data";
+import { getChannelNameById, getDisplayNameBySlackId, getReporterBySlackId, getStoriesByUserId } from "../data";
 import { db, storiesTable, airtableJson, type Story } from "../airtable";
 import { render } from "@react-email/components";
 import { env } from "../env";
@@ -72,11 +72,18 @@ async function sendHappeningsMessage(client: Slack.webApi.WebClient, userId: str
             stories
         )
     });
+    logger.debug({ requestedBy: userId }, "Sent happenings message");
 }
 
 async function sendNewsletter(userId: string, stories: Story[], subject: string, introMd: string, conclusionMd: string, client: Slack.webApi.WebClient) {
+    logger.debug({ requestedBy: userId }, "sendNewsletter: Running passes on mrkdwn")
+    const finalIntroMd = await runPasses(introMd, client);
+    const finalConclusionMd = await runPasses(conclusionMd, client);
+    logger.debug({ requestedBy: userId }, "sendNewsletter: Finished passes on mrkdwn")
+
     const emailHtml = await render(Email({
-        intro: await mentionsToDisplayNamesPass(introMd, client), conclusion: await mentionsToDisplayNamesPass(conclusionMd, client), stories,
+        intro: finalIntroMd, conclusion: finalConclusionMd, stories,
+        // intro: introMd, conclusion: conclusionMd, stories,
     }));
     logger.debug({ requestedBy: userId }, "Sending newsletter");
 
@@ -95,7 +102,10 @@ async function sendNewsletter(userId: string, stories: Story[], subject: string,
         })
     };
     const campaign = await fetch('https://api.useplunk.com/v1/campaigns', campaignOptions)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error(`Failed to create campaign: ${response.statusText}`);
+            return response.json();
+        })
     const sendOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.PLUNK_API_KEY}` },
@@ -114,10 +124,25 @@ async function sendNewsletter(userId: string, stories: Story[], subject: string,
     logger.debug({ requestedBy: userId }, "Sent newsletter");
 }
 
+async function runPasses(md: string, client: Slack.webApi.WebClient) {
+    const displayNamesPass = await mentionsToDisplayNamesPass(md, client);
+    const channelIdsPass = await channelIdsToNamesPass(displayNamesPass, client);
+    return channelIdsPass
+}
+
 async function mentionsToDisplayNamesPass(md: string, client: Slack.webApi.WebClient): Promise<string> {
     return replaceAsync(md, /<@([A-Z0-9]*)>/g, async (matches) => {
         const userId = matches[1];
         const displayName = await getDisplayNameBySlackId(userId, client);
         return `<https://hackclub.slack.com/team/${userId}|@${displayName}>`;
+    });
+}
+
+async function channelIdsToNamesPass(md: string, client: Slack.webApi.WebClient): Promise<string> {
+    return replaceAsync(md, /<#([A-Z0-9]*)>/g, async (matches) => {
+        const channelId = matches[1];
+        const channelName = await getChannelNameById(channelId, client);
+        //const channelName = "PLACEHOLDER-NAME"
+        return `<https://hackclub.slack.com/archives/${channelId}|#${channelName}>`;
     });
 }

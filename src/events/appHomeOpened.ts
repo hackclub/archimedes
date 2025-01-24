@@ -65,7 +65,7 @@ export default async (app: Slack.App) => {
 
         await client.views.publish({
             user_id: userId,
-            view: await reporterHome(reporter.firstName, reporter.slackId),
+            view: await reporterHome(reporter!.firstName, reporter!.slackId),
         });
     })
 
@@ -93,7 +93,7 @@ export default async (app: Slack.App) => {
                 longArticle,
                 shortDescriptionRt: JSON.stringify(shortDescriptionRt),
                 longArticleRt: JSON.stringify(longArticleRt),
-                reporterId: reporter.id
+                reporterId: reporter!.id
             });
         } else {
             logger.debug(`Inserting story for ${userId} (${headline})`);
@@ -103,13 +103,13 @@ export default async (app: Slack.App) => {
                 longArticle,
                 shortDescriptionRt: JSON.stringify(shortDescriptionRt),
                 longArticleRt: JSON.stringify(longArticleRt),
-                reporterId: reporter.id
+                reporterId: reporter!.id
             });
         }
 
         await client.views.publish({
             user_id: userId,
-            view: await reporterHome(reporter.firstName, reporter.slackId),
+            view: await reporterHome(reporter!.firstName, reporter!.slackId),
         });
     })
 
