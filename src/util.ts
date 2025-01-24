@@ -1,5 +1,26 @@
 import type Slack from '@slack/bolt';
+import { getChannelNameById, getDisplayNameBySlackId } from './data';
 
+// #region Misc
+export function chunkArray<T>(array: T[], chunkSize = 10): T[][] {
+    const chunks = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+        chunks.push(array.slice(i, i + chunkSize));
+    }
+    return chunks;
+}
+
+
+export async function replaceAsync(string: string, regexp: RegExp, replacerFunction: (match: string[]) => Promise<string>) {
+    const replacements = await Promise.all(
+        Array.from(string.matchAll(regexp),
+            match => replacerFunction(match)));
+    let i = 0;
+    return string.replace(regexp, () => replacements[i++]);
+}
+// #endregion
+
+// #region mrkdwn
 export const quoteMrkdwn = (text: string): string => {
     return (`> ${text}`).split('\n').join('\n> ')
 }
@@ -86,11 +107,29 @@ export const richTextBlockToMrkdwn = (richTextBlock: Slack.types.RichTextBlock) 
 
     return mrkdwn
 }
+// #endregion
 
-export async function replaceAsync(string: string, regexp: RegExp, replacerFunction: (match: string[]) => Promise<string>) {
-    const replacements = await Promise.all(
-        Array.from(string.matchAll(regexp),
-            match => replacerFunction(match)));
-    let i = 0;
-    return string.replace(regexp, () => replacements[i++]);
+// #region Passes
+export async function runPasses(md: string, client: Slack.webApi.WebClient) {
+    const displayNamesPass = await mentionsToDisplayNamesPass(md, client);
+    const channelIdsPass = await channelIdsToNamesPass(displayNamesPass, client);
+    return channelIdsPass
 }
+
+async function mentionsToDisplayNamesPass(md: string, client: Slack.webApi.WebClient): Promise<string> {
+    return replaceAsync(md, /<@([A-Z0-9]*)>/g, async (matches) => {
+        const userId = matches[1];
+        const displayName = await getDisplayNameBySlackId(userId, client);
+        return `<https://hackclub.slack.com/team/${userId}|@${displayName}>`;
+    });
+}
+
+async function channelIdsToNamesPass(md: string, client: Slack.webApi.WebClient): Promise<string> {
+    return replaceAsync(md, /<#([A-Z0-9]*)>/g, async (matches) => {
+        const channelId = matches[1];
+        const channelName = await getChannelNameById(channelId, client);
+        //const channelName = "PLACEHOLDER-NAME"
+        return `<https://hackclub.slack.com/archives/${channelId}|#${channelName}>`;
+    });
+}
+//

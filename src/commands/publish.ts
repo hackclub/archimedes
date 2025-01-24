@@ -1,8 +1,8 @@
-import { getChannelNameById, getDisplayNameBySlackId, getReporterBySlackId, getStoriesByUserId } from "../data";
+import { getReporterBySlackId, getStoriesByUserId } from "../data";
 import { db, storiesTable, airtableJson, type Story } from "../airtable";
 import { render } from "@react-email/components";
 import { env } from "../env";
-import { replaceAsync, richTextBlockToMrkdwn } from "../util";
+import { richTextBlockToMrkdwn, runPasses } from "../util";
 import type Slack from "@slack/bolt";
 import Email from "../emails/newsletterEmail";
 import publishModal from "../blocks/publishing/publishModal";
@@ -29,6 +29,7 @@ export default function (app: Slack.App) {
         }
 
         const stories = await getStoriesByUserId(body.user_id);
+
         await client.views.open({
             trigger_id: body.trigger_id,
             view: publishModal(stories)
@@ -46,12 +47,20 @@ export default function (app: Slack.App) {
         const approvedStories = await db.scan(storiesTable, {
             filterByFormula: `{status} = "Approved"`
         });
-        await db.airtable.base(airtableJson.data!.baseId).table(airtableJson.data!.stories!.tableId);
 
         await Promise.allSettled([
             sendHappeningsMessage(client, body.user.id, approvedStories, introMd, conclusionMd),
             sendNewsletter(body.user.id, approvedStories, subject, introMd, conclusionMd, client)
         ]);
+
+        // TODO: chunk these in batches of 10
+        await db.airtable.base(airtableJson.data!.baseId).table(airtableJson.data!.stories!.tableId).update(approvedStories.map(story => ({
+            id: story.id,
+            fields: {
+                status: "Published"
+            }
+        })))
+        logger.debug(`Published ${approvedStories.length} stories!`)
     })
 }
 
@@ -82,7 +91,11 @@ async function sendNewsletter(userId: string, stories: Story[], subject: string,
     logger.debug({ requestedBy: userId }, "sendNewsletter: Finished passes on mrkdwn")
 
     const emailHtml = await render(Email({
-        intro: finalIntroMd, conclusion: finalConclusionMd, stories,
+        intro: finalIntroMd, conclusion: finalConclusionMd, stories: await Promise.all(stories.map(async story => ({
+            ...story,
+            headline: await runPasses(story.headline, client),
+            longArticle: await runPasses(story.longArticle, client)
+        }))),
         // intro: introMd, conclusion: conclusionMd, stories,
     }));
     logger.debug({ requestedBy: userId }, "Sending newsletter");
@@ -122,27 +135,4 @@ async function sendNewsletter(userId: string, stories: Story[], subject: string,
     }
 
     logger.debug({ requestedBy: userId }, "Sent newsletter");
-}
-
-async function runPasses(md: string, client: Slack.webApi.WebClient) {
-    const displayNamesPass = await mentionsToDisplayNamesPass(md, client);
-    const channelIdsPass = await channelIdsToNamesPass(displayNamesPass, client);
-    return channelIdsPass
-}
-
-async function mentionsToDisplayNamesPass(md: string, client: Slack.webApi.WebClient): Promise<string> {
-    return replaceAsync(md, /<@([A-Z0-9]*)>/g, async (matches) => {
-        const userId = matches[1];
-        const displayName = await getDisplayNameBySlackId(userId, client);
-        return `<https://hackclub.slack.com/team/${userId}|@${displayName}>`;
-    });
-}
-
-async function channelIdsToNamesPass(md: string, client: Slack.webApi.WebClient): Promise<string> {
-    return replaceAsync(md, /<#([A-Z0-9]*)>/g, async (matches) => {
-        const channelId = matches[1];
-        const channelName = await getChannelNameById(channelId, client);
-        //const channelName = "PLACEHOLDER-NAME"
-        return `<https://hackclub.slack.com/archives/${channelId}|#${channelName}>`;
-    });
 }
