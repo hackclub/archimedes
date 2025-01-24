@@ -12,7 +12,7 @@ async function sendResponseMessage(story: Story, type: "Approved" | "Rejected", 
         logger.error(`Error opening conversation: ${convo.error}`);
         return;
     }
-    const message = type === "Approved" ? `Your story ${story.headline} has been approved! :yay:\nExpect to see it in the next issue.` : `Your story ${story.headline} has been rejected :blob_sad:\nPlease edit your story and try again.`;
+    const message = type === "Approved" ? `Your story *${story.headline}* has been approved! :yay:\nExpect to see it in the next issue.` : `Your story *${story.headline}* has been rejected :blob_sad:\nPlease edit your story and try again.`;
     await client.chat.postMessage({
         channel: convo.channel!.id!,
         text: message
