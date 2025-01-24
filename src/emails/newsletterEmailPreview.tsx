@@ -6,7 +6,7 @@ export default function NewsletterEmailPreview() {
         {
             id: "1",
             headline: ":scrapyard: Scrapyard",
-            longArticle: "This is a really cool *email preview* with Slack mrkdwn! Here's an emoji: :yay:, and here's a link: https://slack.com"
+            longArticle: "This is a really cool *email preview* with Slack mrkdwn! Here's an emoji: :yay:, and here's a link: https://slack.com. Here's a HTML link: <a href='https://slack.com'>Slack</a>"
         },
         {
             id: "2",
@@ -26,6 +26,6 @@ export default function NewsletterEmailPreview() {
     ];
     return (
         // biome-ignore lint/suspicious/noExplicitAny: doesn't really matter, since the fields aren't even used anyway
-        <Email stories={stories as any} intro="This is a really cool *email preview* with Slack mrkdwn! Here's an emoji: :yay:, and here's a link: https://slack.com" conclusion="This is the conclusion. :lfg:" userIdToName={() => "John Doe"} />
+        <Email stories={stories as any} intro="This is a really cool *email preview* with Slack mrkdwn! Here's an emoji: :yay:, and here's a link: https://slack.com" conclusion="This is the conclusion. :lfg:" />
     )
 }

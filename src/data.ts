@@ -72,3 +72,16 @@ export async function getStoriesByUserId(userId: string) {
     // use `filterByFormula` on the `stories` table, but that doesn't work
     return stories.filter(story => story.slackIdRollup.includes(userId));
 }
+
+const displayNamesCache = new TTLCache({ ttl: 60 * 60 * 1000 })
+export async function getDisplayNameBySlackId(slackId: string, client: Slack.webApi.WebClient) {
+    const cacheResponse = displayNamesCache.get(slackId);
+    if (cacheResponse) return cacheResponse as string;
+
+    const user = (await client.users.info({
+        user: slackId
+    }));
+    const displayName = user.user?.profile?.display_name || user.user?.name || "Archimedes";
+    displayNamesCache.set(slackId, displayName);
+    return displayName;
+}

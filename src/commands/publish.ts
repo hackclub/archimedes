@@ -1,8 +1,8 @@
-import { getReporterBySlackId, getStoriesByUserId } from "../data";
+import { getDisplayNameBySlackId, getReporterBySlackId, getStoriesByUserId } from "../data";
 import { db, storiesTable, airtableJson, type Story } from "../airtable";
 import { render } from "@react-email/components";
 import { env } from "../env";
-import { richTextBlockToMrkdwn } from "../util";
+import { replaceAsync, richTextBlockToMrkdwn } from "../util";
 import type Slack from "@slack/bolt";
 import Email from "../emails/newsletterEmail";
 import publishModal from "../blocks/publishing/publishModal";
@@ -75,9 +75,8 @@ async function sendHappeningsMessage(client: Slack.webApi.WebClient, userId: str
 }
 
 async function sendNewsletter(userId: string, stories: Story[], subject: string, introMd: string, conclusionMd: string, client: Slack.webApi.WebClient) {
-    const displayNamesCache: Record<string, string> = {}; // TODO: probably want a global TTL cache for this
     const emailHtml = await render(Email({
-        intro: introMd, conclusion: conclusionMd, stories, userIdToName: (userId: string) => "skyfall"
+        intro: await mentionsToDisplayNamesPass(introMd, client), conclusion: await mentionsToDisplayNamesPass(conclusionMd, client), stories,
     }));
     logger.debug({ requestedBy: userId }, "Sending newsletter");
 
@@ -113,4 +112,12 @@ async function sendNewsletter(userId: string, stories: Story[], subject: string,
     }
 
     logger.debug({ requestedBy: userId }, "Sent newsletter");
+}
+
+async function mentionsToDisplayNamesPass(md: string, client: Slack.webApi.WebClient): Promise<string> {
+    return replaceAsync(md, /<@([A-Z0-9]*)>/g, async (matches) => {
+        const userId = matches[1];
+        const displayName = await getDisplayNameBySlackId(userId, client);
+        return `<https://hackclub.slack.com/team/${userId}|@${displayName}>`;
+    });
 }
