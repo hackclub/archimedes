@@ -1,4 +1,3 @@
-import { db, storiesTable } from "../../airtable"
 import { getStoriesByUserId } from "../../data";
 import logger from "../../logger";
 import type Slack from "@slack/bolt";

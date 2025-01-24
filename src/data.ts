@@ -3,7 +3,6 @@ import { env } from "./env";
 import { stageRequest } from "./blocks/approvals/stageRequest";
 import type Slack from "@slack/bolt";
 import TTLCache from "@isaacs/ttlcache";
-import logger from "./logger";
 
 export type Details = {
     headline: string,

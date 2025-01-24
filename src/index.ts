@@ -16,7 +16,7 @@ const app = new App({
     logLevel: LogLevel.INFO,
     logger: {
         // Cannot spread due to https://github.com/pinojs/pino/issues/545
-        debug: (args) => { },
+        debug: () => { },
         info: (args) => logger.info(args),
         warn: (args) => logger.warn(args),
         error: (args) => logger.error(args),

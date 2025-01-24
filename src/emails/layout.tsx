@@ -1,4 +1,5 @@
 import { Font, Head, Container, Html, Tailwind, Heading, Text } from "@react-email/components";
+import type React from "react";
 
 function Preview() {
     return (

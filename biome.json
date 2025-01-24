@@ -25,6 +25,11 @@
 			},
 			"suspicious": {
 				"noConsole": "warn"
+			},
+			"correctness": {
+				"all": true,
+				"useImportExtensions": "off",
+				"noNodejsModules": "off"
 			}
 		}
 	},

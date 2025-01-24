@@ -2,7 +2,6 @@ import type Slack from "@slack/bolt";
 import { db, storiesTable, type Story } from "../airtable";
 import { stageRequest } from "../blocks/approvals/stageRequest";
 import logger from "../logger";
-import { env } from "../env";
 
 async function sendResponseMessage(story: Story, type: "Approved" | "Rejected", client: Slack.webApi.WebClient) {
     logger.debug(`Sending response message to ${story.slackIdRollup.length} author(s) for story ${story.headline} (${story.id})`)
