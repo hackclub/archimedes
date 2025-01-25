@@ -1,5 +1,23 @@
 # archimedes
-A helpful newspaper bot for [Hack Club.](https://hackclub.com/)
+A helpful newspaper bot for [Hack Club.](https://hackclub.com/). Archimedes handles **story writing**, **editor approvals** (like the #confessions channel), and **auto-generation** of both Slack messages and emails sent out to folks subscribed.
+
+_Here from High Seas?_ I'd recommend watching the demo video to get a better idea of how Archimedes works!
+
+## Features
+
+### Rich text editor
+
+### Staging/approvals system
+
+Reporters initially write **drafts** of their stories in Archimedes' app home. When they're ready, they can click a button to stage their story for publication. A message will then be sent in the approvals channel, where editors can approve or reject the story.
+
+![image](https://cloud-mrbjhqh91-hack-club-bot.vercel.app/0image.png)
+
+### Auto-generation
+
+Archimedes will automatically generate both a Slack message in the #happenings channel, and an email for each issue. Slack-specific features such as user mentions and emojis will be handled automatically.
+
+![image](https://cloud-qolkvumrf-hack-club-bot.vercel.app/0snippetx-2025-01-25.png)
 
 ## Development
 To install dependencies:
