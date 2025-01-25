@@ -1,7 +1,7 @@
-# archimedes
+# Archimedes
 A helpful newspaper bot for [Hack Club.](https://hackclub.com/). Archimedes handles **story writing**, **editor approvals** (like the #confessions channel), and **auto-generation** of both Slack messages and emails sent out to folks subscribed.
 
-_Here from High Seas?_ I'd recommend watching the demo video to get a better idea of how Archimedes works!
+_Here from High Seas?_ I'd recommend watching [the demo video](https://cloud-40lv302ky-hack-club-bot.vercel.app/0a_storytelling_bot.mp4) to get a better idea of how Archimedes works!
 
 ## Features
 
