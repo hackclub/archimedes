@@ -2,6 +2,12 @@
  * @skyfall says:
  * Welcome to Archimedes' Loops client!
  *
+ * Fair warning: this code is quite ugly at the moment - my focus was on the
+ * reverse engineering part, not code cleanliness :sweat_smile:
+ *
+ * That being said, please do open an issue if this comment is still here, so
+ * I can get rid of the tech debt.
+ *
  * This part of the code is responsible for creating a new campaign and sending it to Loops.
  * Issues? Email me at hi@skyfall.dev.
  */
@@ -24,10 +30,17 @@ interface UpdateCampaignAudience {
   audienceSegmentId: string;
 }
 
+interface FromNameEmailAndSubject {
+  fromName: string;
+  fromEmail: string;
+  subject: string;
+}
+
 type CreateCampaign = Omit<
   UpdateCampaignEmojiAndName &
     Omit<UseMjml, "emailMessageId"> &
-    UpdateCampaignAudience,
+    UpdateCampaignAudience &
+    FromNameEmailAndSubject,
   "campaignId"
 >;
 
@@ -165,6 +178,69 @@ class LoopsClient {
     }
   }
 
+  async #setFromName(emailMessageId: string, fromName: string) {
+    const updateFromNameResponse = await fetch(
+      `https://app.loops.so/api/emailMessages/${emailMessageId}/update`,
+      {
+        headers: {
+          "content-type": "application/json",
+          cookie: this.cookie,
+        },
+        body: JSON.stringify({
+          fromName,
+        }),
+        method: "PUT",
+      }
+    );
+    if (!updateFromNameResponse.ok) {
+      throw new Error(
+        `Failed to update from name: ${updateFromNameResponse.statusText}`
+      );
+    }
+  }
+
+  async #setFromEmail(emailMessageId: string, fromEmail: string) {
+    const updateFromEmailResponse = await fetch(
+      `https://app.loops.so/api/emailMessages/${emailMessageId}/update`,
+      {
+        headers: {
+          "content-type": "application/json",
+          cookie: this.cookie,
+        },
+        body: JSON.stringify({
+          fromEmail,
+        }),
+        method: "PUT",
+      }
+    );
+    if (!updateFromEmailResponse.ok) {
+      throw new Error(
+        `Failed to update from email: ${updateFromEmailResponse.statusText}`
+      );
+    }
+  }
+
+  async #setSubject(emailMessageId: string, subject: string) {
+    const updateSubjectResponse = await fetch(
+      `https://app.loops.so/api/emailMessages/${emailMessageId}/update`,
+      {
+        headers: {
+          "content-type": "application/json",
+          cookie: this.cookie,
+        },
+        body: JSON.stringify({
+          subject,
+        }),
+        method: "PUT",
+      }
+    );
+    if (!updateSubjectResponse.ok) {
+      throw new Error(
+        `Failed to update subject: ${updateSubjectResponse.statusText}`
+      );
+    }
+  }
+
   async #uploadMjml(body: UseMjml) {
     const updateEmailTypeResponse = await fetch(
       `https://app.loops.so/api/emailMessages/${body.emailMessageId}/update`,
@@ -250,6 +326,9 @@ class LoopsClient {
       name: campaign.name,
       campaignId,
     });
+    await this.#setFromName(emailMessageId, campaign.fromName);
+    await this.#setFromEmail(emailMessageId, campaign.fromEmail);
+    await this.#setSubject(emailMessageId, campaign.subject);
     await this.#uploadMjml({
       emailMessageId,
       zipFile: campaign.zipFile,
@@ -263,21 +342,24 @@ class LoopsClient {
   }
 }
 
-// const client = new LoopsClient(process.env.LOOPS_SESSION_TOKEN!);
-// const audienceFilter = {
-//   AND: [
-//     {
-//       key: "email",
-//       value: "hi@skyfall.dev",
-//       operation: "contains",
-//     },
-//   ],
-// };
-// const audienceSegmentId = "cm7j9be4v01dkk2vxh63ey3h9";
-// await client.createCampaign({
-//   emoji: "🤖",
-//   name: Math.random().toString(),
-//   zipFile: Bun.file("mjml.zip") as unknown as File,
-//   audienceFilter,
-//   audienceSegmentId,
-// });
+const client = new LoopsClient(process.env.LOOPS_SESSION_TOKEN!);
+const audienceFilter = {
+  AND: [
+    {
+      key: "email",
+      value: "hi@skyfall.dev",
+      operation: "contains",
+    },
+  ],
+};
+const audienceSegmentId = "cm7j9be4v01dkk2vxh63ey3h9";
+await client.createCampaign({
+  emoji: "🤖",
+  name: "Archimedes " + Math.random().toString(),
+  subject: "Archimedes " + Math.random().toString(),
+  zipFile: Bun.file("mjml.zip") as unknown as File,
+  audienceFilter,
+  audienceSegmentId,
+  fromName: "Archimedes",
+  fromEmail: "mahad",
+});
