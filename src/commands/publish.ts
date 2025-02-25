@@ -195,5 +195,6 @@ async function sendNewsletter(
 		audienceSegmentId: "cm7j9be4v01dkk2vxh63ey3h9",
 		fromName: "Mahad Kalam",
 		fromEmail: "mahad",
+		replyToEmail: "mahad@hackclub.com",
 	});
 }

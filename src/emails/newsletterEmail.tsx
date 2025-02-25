@@ -19,7 +19,7 @@ const mrkdwnToHTML = (mrkdwn: string, largeText = false) => {
 		/:([A-Za-z0-9_-]*):/g,
 		(_, emojiName) => `
             <img
-                src="https://cachet.dunkirk.sh/emojis/${emojiName}/r"
+                src="https://cachet.dunkirk.sh/emojis/${(emojiName as string).toLowerCase()}/r"
                 height="${imageSize}"
                 width="${imageSize}"
                 style="vertical-align: baseline; height: auto; position: relative; overflow: visible; align-items: center; display: inline-flex;"

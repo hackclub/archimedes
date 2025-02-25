@@ -29,9 +29,10 @@ interface UpdateCampaignAudience {
 	audienceSegmentId: string;
 }
 
-interface FromNameEmailAndSubject {
+interface CampaignDetails {
 	fromName: string;
 	fromEmail: string;
+	replyToEmail: string;
 	subject: string;
 }
 
@@ -39,7 +40,7 @@ type CreateCampaign = Omit<
 	UpdateCampaignEmojiAndName &
 		Omit<UseMjml, "emailMessageId"> &
 		UpdateCampaignAudience &
-		FromNameEmailAndSubject,
+		CampaignDetails,
 	"campaignId"
 >;
 
@@ -139,6 +140,12 @@ export default class LoopsClient {
 		});
 	}
 
+	async #setReplyToEmail(emailMessageId: string, replyToEmail: string) {
+		await this.#apiRequest(`/emailMessages/${emailMessageId}/update`, "PUT", {
+			replyToEmail,
+		});
+	}
+
 	async #setSubject(emailMessageId: string, subject: string) {
 		await this.#apiRequest(`/emailMessages/${emailMessageId}/update`, "PUT", {
 			subject,
@@ -199,6 +206,7 @@ export default class LoopsClient {
 
 		await this.#setFromName(emailMessageId, campaign.fromName);
 		await this.#setFromEmail(emailMessageId, campaign.fromEmail);
+		await this.#setReplyToEmail(emailMessageId, campaign.replyToEmail);
 		await this.#setSubject(emailMessageId, campaign.subject);
 
 		await this.#uploadMjml({
