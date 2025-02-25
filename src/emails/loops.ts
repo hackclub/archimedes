@@ -58,6 +58,32 @@ class LoopsClient {
     this.cookie = `__Secure-next-auth.session-token=${sessionToken}`;
   }
 
+  async #apiRequest(
+    url: string,
+    method: "GET" | "POST" | "PUT" | "DELETE",
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    body: Record<string, any>
+  ) {
+    const response = await fetch(`https://app.loops.so/api${url}`, {
+      headers: {
+        "content-type": "application/json",
+        cookie: this.cookie,
+      },
+      body: JSON.stringify(body),
+      method,
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Failed to send request: ${response.statusText} (${method} ${url})`
+      );
+    }
+    const json = await response.json();
+    if (json.success === false) {
+      throw new Error(`Failed to send request: ${json} (${method} ${url})`);
+    }
+    return json;
+  }
+
   /**
    * Creates a new campaign and returns the campaign ID.
    * You'll need to use it later to update the campaign's title, emoji and message content.
@@ -65,224 +91,86 @@ class LoopsClient {
   // What's "ckxja0s6q0000yjr6vqouwn8a" you ask? Looks like it's Loops' default, blank template ID.
   // Tested across two different Loops accounts and teams and works as expected.
   async #createCampaignAndReturnId(templateId = "ckxja0s6q0000yjr6vqouwn8a") {
-    const response = await fetch("https://app.loops.so/api/campaigns/create", {
-      headers: {
-        "content-type": "application/json",
-        cookie: this.cookie,
-        Referer: "https://app.loops.so/home",
-      },
-      body: JSON.stringify({ templateId }),
-      method: "POST",
+    const response = await this.#apiRequest("/campaigns/create", "POST", {
+      templateId,
     });
-    if (!response.ok) {
-      throw new Error(`Failed to create campaign: ${response.statusText}`);
+    if (!response.success) {
+      throw new Error(`Failed to create campaign: ${response.message}`);
     }
-
-    const json = await response.json();
-    if (!json.success) {
-      throw new Error(`Failed to create campaign: ${json}`);
-    }
-
-    return json.campaignId as string;
+    return response.campaignId as string;
   }
 
   async #updateCampaignEmojiAndName(
     body: UpdateCampaignEmojiAndName
   ): Promise<string> {
-    const response = await fetch(
-      `https://app.loops.so/api/campaigns/${body.campaignId}`,
+    const response = await this.#apiRequest(
+      `/campaigns/${body.campaignId}`,
+      "PUT",
       {
-        headers: {
-          "content-type": "application/json",
-          cookie: this.cookie,
-        },
-        body: JSON.stringify({
-          ...body,
-          campaignId: undefined,
-        }),
-        method: "PUT",
+        ...body,
+        campaignId: undefined,
       }
     );
-
-    if (!response.ok) {
-      throw new Error(`Failed to update campaign: ${response.statusText}`);
-    }
-
-    const json = await response.json();
-    if (!json.success) {
-      throw new Error(`Failed to update campaign: ${json}`);
-    }
-
-    return json.campaign.emailMessage.id;
+    return response.campaign.emailMessage.id;
   }
 
   async #updateCampaignAudience(body: UpdateCampaignAudience) {
-    const response = await fetch(
-      `https://app.loops.so/api/campaigns/${body.campaignId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          cookie: this.cookie,
-        },
-        body: JSON.stringify({
-          audienceFilter: body.audienceFilter,
-          audienceSegmentId: body.audienceSegmentId,
-        }),
-      }
-    );
-    if (!response.ok) {
-      throw new Error(
-        `Failed to update campaign audience: ${response.statusText}`
-      );
-    }
+    await this.#apiRequest(`/campaigns/${body.campaignId}`, "PUT", {
+      audienceFilter: body.audienceFilter,
+      audienceSegmentId: body.audienceSegmentId,
+    });
   }
 
   async #scheduleCampaignNow(campaignId: string) {
-    const setSchedulingMethodResponse = await fetch(
-      `https://app.loops.so/api/campaigns/${campaignId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          cookie: this.cookie,
-        },
-        body: JSON.stringify({
-          scheduling: {
-            method: "now",
-          },
-        }),
-      }
-    );
-    if (!setSchedulingMethodResponse.ok) {
-      throw new Error(
-        `Failed to set scheduling method for campaign: ${setSchedulingMethodResponse.statusText}`
-      );
-    }
+    await this.#apiRequest(`/campaigns/${campaignId}`, "PUT", {
+      scheduling: {
+        method: "now",
+      },
+    });
 
-    const updateStatusResponse = await fetch(
-      `https://app.loops.so/api/campaigns/${campaignId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          cookie: this.cookie,
-        },
-        body: JSON.stringify({ status: "Scheduled" }),
-      }
-    );
-    if (!updateStatusResponse.ok) {
-      throw new Error(
-        `Failed to update campaign status: ${updateStatusResponse.statusText}`
-      );
-    }
+    await this.#apiRequest(`/campaigns/${campaignId}`, "PUT", {
+      status: "Scheduled",
+    });
   }
 
   async #setFromName(emailMessageId: string, fromName: string) {
-    const updateFromNameResponse = await fetch(
-      `https://app.loops.so/api/emailMessages/${emailMessageId}/update`,
-      {
-        headers: {
-          "content-type": "application/json",
-          cookie: this.cookie,
-        },
-        body: JSON.stringify({
-          fromName,
-        }),
-        method: "PUT",
-      }
-    );
-    if (!updateFromNameResponse.ok) {
-      throw new Error(
-        `Failed to update from name: ${updateFromNameResponse.statusText}`
-      );
-    }
+    await this.#apiRequest(`/emailMessages/${emailMessageId}/update`, "PUT", {
+      fromName,
+    });
   }
 
   async #setFromEmail(emailMessageId: string, fromEmail: string) {
-    const updateFromEmailResponse = await fetch(
-      `https://app.loops.so/api/emailMessages/${emailMessageId}/update`,
-      {
-        headers: {
-          "content-type": "application/json",
-          cookie: this.cookie,
-        },
-        body: JSON.stringify({
-          fromEmail,
-        }),
-        method: "PUT",
-      }
-    );
-    if (!updateFromEmailResponse.ok) {
-      throw new Error(
-        `Failed to update from email: ${updateFromEmailResponse.statusText}`
-      );
-    }
+    await this.#apiRequest(`/emailMessages/${emailMessageId}/update`, "PUT", {
+      fromEmail,
+    });
   }
 
   async #setSubject(emailMessageId: string, subject: string) {
-    const updateSubjectResponse = await fetch(
-      `https://app.loops.so/api/emailMessages/${emailMessageId}/update`,
-      {
-        headers: {
-          "content-type": "application/json",
-          cookie: this.cookie,
-        },
-        body: JSON.stringify({
-          subject,
-        }),
-        method: "PUT",
-      }
-    );
-    if (!updateSubjectResponse.ok) {
-      throw new Error(
-        `Failed to update subject: ${updateSubjectResponse.statusText}`
-      );
-    }
+    await this.#apiRequest(`/emailMessages/${emailMessageId}/update`, "PUT", {
+      subject,
+    });
   }
 
   async #uploadMjml(body: UseMjml) {
-    const updateEmailTypeResponse = await fetch(
-      `https://app.loops.so/api/emailMessages/${body.emailMessageId}/update`,
+    await this.#apiRequest(
+      `/emailMessages/${body.emailMessageId}/update`,
+      "PUT",
       {
-        headers: {
-          "content-type": "application/json",
-          cookie: this.cookie,
-        },
-        body: JSON.stringify({
-          editorType: "MJML",
-        }),
-        method: "PUT",
+        editorType: "MJML",
       }
     );
-    if (!updateEmailTypeResponse.ok) {
-      throw new Error(
-        `Failed to update email type: ${updateEmailTypeResponse.statusText}`
-      );
-    }
 
-    const getPresignedUrlResponse = await fetch(
-      "https://app.loops.so/api/trpc/emailMessages.getPresignedMjmlUpload",
-      {
-        headers: {
-          "content-type": "application/json",
-          cookie: this.cookie,
-        },
-        body: JSON.stringify({
+    const { filename, presignedUrl } = (
+      await this.#apiRequest(
+        "/trpc/emailMessages.getPresignedMjmlUpload",
+        "POST",
+        {
           json: {
             emailMessageId: body.emailMessageId,
           },
-        }),
-        method: "POST",
-      }
-    );
-    if (!getPresignedUrlResponse.ok) {
-      throw new Error(
-        `Failed to use MJML: ${getPresignedUrlResponse.statusText}`
-      );
-    }
-    const { filename, presignedUrl } = (await getPresignedUrlResponse.json())
-      .result.data.json;
+        }
+      )
+    ).result.data.json;
 
     const s3Response = await fetch(presignedUrl, {
       method: "PUT",
@@ -295,28 +183,13 @@ class LoopsClient {
       throw new Error(`Failed to upload MJML to S3: ${s3Response.statusText}`);
     }
 
-    const addS3FilenameResponse = await fetch(
-      `https://app.loops.so/api/emailMessages/${body.emailMessageId}/upload-mjml-zip`,
+    await this.#apiRequest(
+      `/emailMessages/${body.emailMessageId}/upload-mjml-zip`,
+      "POST",
       {
-        headers: {
-          "content-type": "application/json",
-          cookie: this.cookie,
-        },
-        body: JSON.stringify({
-          filename,
-        }),
-        method: "POST",
+        filename,
       }
     );
-    if (!addS3FilenameResponse.ok) {
-      throw new Error(
-        `Failed to upload S3 link to Loops: ${addS3FilenameResponse.statusText}`
-      );
-    }
-    const json = await addS3FilenameResponse.json();
-    if (!json.success) {
-      throw new Error(`Failed to upload S3 link to Loops: ${json}`);
-    }
   }
 
   async createCampaign(campaign: CreateCampaign) {
@@ -355,8 +228,8 @@ const audienceFilter = {
 const audienceSegmentId = "cm7j9be4v01dkk2vxh63ey3h9";
 await client.createCampaign({
   emoji: "🤖",
-  name: "Archimedes " + Math.random().toString(),
-  subject: "Archimedes " + Math.random().toString(),
+  name: `Archimedes ${Math.random().toString()}`,
+  subject: `Archimedes ${Math.random().toString()}`,
   zipFile: Bun.file("mjml.zip") as unknown as File,
   audienceFilter,
   audienceSegmentId,
