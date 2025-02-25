@@ -1,56 +1,53 @@
 {
-    "display_information": {
-        "name": "Archimedes",
-        "description": "A helpful bot named after the great mathematician",
-        "background_color": "#2c3e50"
-    },
-    "features": {
-        "app_home": {
-            "home_tab_enabled": true,
-            "messages_tab_enabled": true,
-            "messages_tab_read_only_enabled": true
-        },
-        "bot_user": {
-            "display_name": "Archimedes",
-            "always_online": true
-        },
-        "slash_commands": [
-            {
-                "command": "/arch-publish",
-                "description": "Publish a #happenings post and send out the newsletter",
-                "should_escape": false
-            }
-        ]
-    },
-    "oauth_config": {
-        "scopes": {
-            "bot": [
-                "chat:write",
-                "chat:write.customize",
-                "channels:read",
-                "channels:history",
-                "users:read",
-                "users:read.email",
-                "commands",
-                "groups:write",
-                "im:write",
-                "mpim:write",
-                "files:write"
-            ]
-        }
-    },
-    "settings": {
-        "event_subscriptions": {
-            "bot_events": [
-                "app_home_opened",
-                "message.channels"
-            ]
-        },
-        "interactivity": {
-            "is_enabled": true
-        },
-        "org_deploy_enabled": false,
-        "socket_mode_enabled": true,
-        "token_rotation_enabled": false
-    }
+	"display_information": {
+		"name": "Archimedes",
+		"description": "A helpful bot named after the great mathematician",
+		"background_color": "#2c3e50"
+	},
+	"features": {
+		"app_home": {
+			"home_tab_enabled": true,
+			"messages_tab_enabled": true,
+			"messages_tab_read_only_enabled": true
+		},
+		"bot_user": {
+			"display_name": "Archimedes",
+			"always_online": true
+		},
+		"slash_commands": [
+			{
+				"command": "/arch-publish",
+				"description": "Publish a #happenings post and send out the newsletter",
+				"should_escape": false
+			}
+		]
+	},
+	"oauth_config": {
+		"scopes": {
+			"bot": [
+				"chat:write",
+				"chat:write.customize",
+				"channels:read",
+				"channels:history",
+				"users:read",
+				"users:read.email",
+				"commands",
+				"groups:write",
+				"im:write",
+				"mpim:write",
+				"files:write"
+			]
+		}
+	},
+	"settings": {
+		"event_subscriptions": {
+			"bot_events": ["app_home_opened", "message.channels"]
+		},
+		"interactivity": {
+			"is_enabled": true
+		},
+		"org_deploy_enabled": false,
+		"socket_mode_enabled": true,
+		"token_rotation_enabled": false
+	}
 }

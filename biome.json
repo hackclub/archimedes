@@ -36,6 +36,7 @@
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "double"
-		}
+		},
+		"globals": ["Bun"]
 	}
 }

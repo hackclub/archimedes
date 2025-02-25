@@ -1,38 +1,37 @@
 {
-  "name": "archimedes",
-  "version": "0.0.1",
-  "module": "src/index.ts",
-  "type": "module",
-  "scripts": {
-    "dev": "LOG_LEVEL=debug bun --watch . | pino-pretty",
-    "dev:emails": "email dev --dir src/emails",
-    "lint": "biome lint",
-    "pino-pretty": "pino-pretty"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@types/react": "^19.0.7",
-    "@types/bun": "latest",
-    "pino-pretty": "^13.0.0",
-    "react-email": "3.0.6"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@fontsource/inter": "^5.1.1",
-    "@isaacs/ttlcache": "^1.4.1",
-    "@react-email/components": "0.0.32",
-    "@slack/bolt": "^4.2.0",
-    "airtable-ts": "^1.4.0",
-    "pino": "^9.6.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "slack-markdown": "^0.3.0",
-    "zod": "^3.24.1",
-    "zod-validation-error": "^3.4.0"
-  },
-  "trustedDependencies": [
-    "@biomejs/biome"
-  ]
+	"name": "archimedes",
+	"version": "0.0.1",
+	"module": "src/index.ts",
+	"type": "module",
+	"scripts": {
+		"dev": "LOG_LEVEL=debug bun --watch . | pino-pretty",
+		"dev:emails": "email dev --dir src/emails",
+		"check": "biome check",
+		"format": "biome format --write",
+		"pino-pretty": "pino-pretty"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@types/react": "^19.0.7",
+		"@types/bun": "latest",
+		"pino-pretty": "^13.0.0",
+		"react-email": "3.0.6"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"dependencies": {
+		"@fontsource/inter": "^5.1.1",
+		"@isaacs/ttlcache": "^1.4.1",
+		"@react-email/components": "0.0.32",
+		"@slack/bolt": "^4.2.0",
+		"airtable-ts": "^1.4.0",
+		"pino": "^9.6.0",
+		"react": "19.0.0",
+		"react-dom": "19.0.0",
+		"slack-markdown": "^0.3.0",
+		"zod": "^3.24.1",
+		"zod-validation-error": "^3.4.0"
+	},
+	"trustedDependencies": ["@biomejs/biome"]
 }
