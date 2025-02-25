@@ -86,6 +86,7 @@ export interface Reporter extends Item {
 	readonly autonumber: number;
 	slackId: string;
 	hasPublishingRights: boolean;
+	emailUsername: string;
 }
 
 export const reportersTable: Table<Reporter> = {
@@ -106,6 +107,7 @@ export const reportersTable: Table<Reporter> = {
 		autonumber: "number",
 		slackId: "string",
 		hasPublishingRights: "boolean",
+		emailUsername: "string",
 	},
 };
 

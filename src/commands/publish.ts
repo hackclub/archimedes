@@ -8,6 +8,8 @@ import Email from "../emails/newsletterEmail";
 import publishModal from "../blocks/publishing/publishModal";
 import buildHappeningsMessage from "../blocks/publishing/happeningsMessage";
 import logger from "../logger";
+import LoopsClient from "../emails/loops";
+import JSZip from "jszip";
 
 export default function (app: Slack.App) {
 	app.command("/arch-publish", async ({ ack, client, body, respond }) => {
@@ -123,6 +125,7 @@ async function sendHappeningsMessage(
 	logger.debug({ requestedBy: userId }, "Sent happenings message");
 }
 
+const loopsClient = new LoopsClient(env.LOOPS_SESSION_TOKEN);
 async function sendNewsletter(
 	userId: string,
 	stories: Story[],
@@ -156,50 +159,41 @@ async function sendNewsletter(
 			// intro: introMd, conclusion: conclusionMd, stories,
 		}),
 	);
+	const zip = new JSZip();
+	zip.file(
+		"index.mjml",
+		`
+	<mjml>
+  		<mj-body>
+    		<mj-raw>
+      			${emailHtml}
+    		</mj-raw>
+  		</mj-body>
+	</mjml>
+	`,
+	);
+	const generatedZip = new File(
+		[await zip.generateAsync({ type: "blob" })],
+		"mjml.zip",
+	);
 	logger.debug({ requestedBy: userId }, "Sending newsletter");
 
-	const headers = {
-		"Content-Type": "application/json",
-		Authorization: `Bearer ${env.PLUNK_API_KEY}`,
-	};
-	const campaignOptions = {
-		method: "POST",
-		headers,
-		body: JSON.stringify({
-			subject,
-			body: emailHtml,
-			recipients: ["mahadkalam1@proton.me"],
-			style: "HTML",
-		}),
-	};
-	const campaign = await fetch(
-		"https://api.useplunk.com/v1/campaigns",
-		campaignOptions,
-	).then((response) => {
-		if (!response.ok)
-			throw new Error(`Failed to create campaign: ${response.statusText}`);
-		return response.json();
-	});
-	const sendOptions = {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${env.PLUNK_API_KEY}`,
+	await loopsClient.createCampaign({
+		emoji: "📰",
+		name: `Archimedes: ${subject}`,
+		subject,
+		zipFile: generatedZip as unknown as File,
+		audienceFilter: {
+			AND: [
+				{
+					key: "email",
+					value: "hi@skyfall.dev",
+					operation: "contains",
+				},
+			],
 		},
-		body: JSON.stringify({
-			id: campaign.id,
-			live: true,
-			delay: 0,
-		}),
-	};
-
-	const response = await fetch(
-		"https://api.useplunk.com/v1/campaigns/send",
-		sendOptions,
-	);
-	if (!response.ok) {
-		throw new Error(`Failed to send campaign: ${response.statusText}`);
-	}
-
-	logger.debug({ requestedBy: userId }, "Sent newsletter");
+		audienceSegmentId: "cm7j9be4v01dkk2vxh63ey3h9",
+		fromName: "Mahad Kalam",
+		fromEmail: "mahad",
+	});
 }

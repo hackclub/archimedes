@@ -48,7 +48,7 @@ type CreateCampaign = Omit<
  *
  * This client is responsible for creating a new campaign and sending it to Loops.
  */
-class LoopsClient {
+export default class LoopsClient {
 	sessionToken: string;
 	cookie: string;
 	baseUrl: string;
@@ -216,25 +216,3 @@ class LoopsClient {
 		return campaignId;
 	}
 }
-
-const client = new LoopsClient(process.env.LOOPS_SESSION_TOKEN!);
-const audienceFilter = {
-	AND: [
-		{
-			key: "email",
-			value: "hi@skyfall.dev",
-			operation: "contains",
-		},
-	],
-};
-const audienceSegmentId = "cm7j9be4v01dkk2vxh63ey3h9";
-await client.createCampaign({
-	emoji: "🤖",
-	name: `Archimedes ${Math.random().toString()}`,
-	subject: `Archimedes ${Math.random().toString()}`,
-	zipFile: Bun.file("mjml.zip") as unknown as File,
-	audienceFilter,
-	audienceSegmentId,
-	fromName: "Archimedes",
-	fromEmail: "mahad",
-});

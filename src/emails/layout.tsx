@@ -6,6 +6,8 @@ import {
 	Tailwind,
 	Heading,
 	Text,
+	Hr,
+	Link,
 } from "@react-email/components";
 import type React from "react";
 
@@ -67,7 +69,22 @@ export default function Layout(
 				/>
 			</Head>
 			<Container>
-				<Tailwind>{children}</Tailwind>
+				<Tailwind>
+					{children}
+					<Hr />
+					<Text className="text-sm text-gray-500">
+						Hack Club, a 501(c)(3) nonprofit
+						<br />
+						15 Falls Road, Shelburne, VT 05482
+					</Text>
+					{/* Added by Loops */}
+					<Link
+						href="{unsubscribe_link}"
+						className="text-sm font-semibold text-gray-500"
+					>
+						Manage email preferences
+					</Link>
+				</Tailwind>
 			</Container>
 		</Html>
 	);
