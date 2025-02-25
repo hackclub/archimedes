@@ -52,10 +52,12 @@ type CreateCampaign = Omit<
 class LoopsClient {
   sessionToken: string;
   cookie: string;
+  baseUrl: string;
 
-  constructor(sessionToken: string) {
+  constructor(sessionToken: string, baseUrl = "https://app.loops.so/api") {
     this.sessionToken = sessionToken;
     this.cookie = `__Secure-next-auth.session-token=${sessionToken}`;
+    this.baseUrl = baseUrl;
   }
 
   async #apiRequest(
@@ -64,7 +66,7 @@ class LoopsClient {
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     body: Record<string, any>
   ) {
-    const response = await fetch(`https://app.loops.so/api${url}`, {
+    const response = await fetch(`${this.baseUrl}${url}`, {
       headers: {
         "content-type": "application/json",
         cookie: this.cookie,
@@ -94,9 +96,6 @@ class LoopsClient {
     const response = await this.#apiRequest("/campaigns/create", "POST", {
       templateId,
     });
-    if (!response.success) {
-      throw new Error(`Failed to create campaign: ${response.message}`);
-    }
     return response.campaignId as string;
   }
 
