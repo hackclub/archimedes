@@ -25,8 +25,7 @@ interface UseMjml {
 
 interface UpdateCampaignAudience {
   campaignId: string;
-  // biome-ignore lint/suspicious/noExplicitAny: TODO
-  audienceFilter: Record<string, any>;
+  audienceFilter: Record<string, unknown>;
   audienceSegmentId: string;
 }
 
@@ -63,8 +62,7 @@ class LoopsClient {
   async #apiRequest(
     url: string,
     method: "GET" | "POST" | "PUT" | "DELETE",
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    body: Record<string, any>
+    body: Record<string, unknown>
   ) {
     const response = await fetch(`${this.baseUrl}${url}`, {
       headers: {
@@ -93,23 +91,20 @@ class LoopsClient {
   // What's "ckxja0s6q0000yjr6vqouwn8a" you ask? Looks like it's Loops' default, blank template ID.
   // Tested across two different Loops accounts and teams and works as expected.
   async #createCampaignAndReturnId(templateId = "ckxja0s6q0000yjr6vqouwn8a") {
-    const response = await this.#apiRequest("/campaigns/create", "POST", {
+    const { campaignId } = await this.#apiRequest("/campaigns/create", "POST", {
       templateId,
     });
-    return response.campaignId as string;
+    return campaignId as string;
   }
 
   async #updateCampaignEmojiAndName(
     body: UpdateCampaignEmojiAndName
   ): Promise<string> {
-    const response = await this.#apiRequest(
-      `/campaigns/${body.campaignId}`,
-      "PUT",
-      {
+    const response: { campaign: { emailMessage: { id: string } } } =
+      await this.#apiRequest(`/campaigns/${body.campaignId}`, "PUT", {
         ...body,
         campaignId: undefined,
-      }
-    );
+      });
     return response.campaign.emailMessage.id;
   }
 
@@ -159,7 +154,10 @@ class LoopsClient {
       }
     );
 
-    const { filename, presignedUrl } = (
+    const {
+      filename,
+      presignedUrl,
+    }: { filename: string; presignedUrl: string } = (
       await this.#apiRequest(
         "/trpc/emailMessages.getPresignedMjmlUpload",
         "POST",
@@ -198,19 +196,24 @@ class LoopsClient {
       name: campaign.name,
       campaignId,
     });
+
     await this.#setFromName(emailMessageId, campaign.fromName);
     await this.#setFromEmail(emailMessageId, campaign.fromEmail);
     await this.#setSubject(emailMessageId, campaign.subject);
+
     await this.#uploadMjml({
       emailMessageId,
       zipFile: campaign.zipFile,
     });
+
     await this.#updateCampaignAudience({
       campaignId,
       audienceFilter: campaign.audienceFilter,
       audienceSegmentId: campaign.audienceSegmentId,
     });
     await this.#scheduleCampaignNow(campaignId);
+
+    return campaignId;
   }
 }
 
