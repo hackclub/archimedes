@@ -1,8 +1,8 @@
-import { env } from "./env";
-import { AirtableTs, type Table, type Item } from "airtable-ts";
+import { readFile } from "node:fs/promises";
+import { AirtableTs, type Item, type Table } from "airtable-ts";
 import { z } from "zod";
 import { fromError } from "zod-validation-error";
-import { readFile } from "node:fs/promises";
+import { env } from "./env";
 import logger from "./logger";
 
 export const db = new AirtableTs({

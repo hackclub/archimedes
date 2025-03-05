@@ -1,14 +1,14 @@
+import TTLCache from "@isaacs/ttlcache";
+import type Slack from "@slack/bolt";
 import {
+	type Reporter,
+	type Story,
 	db,
 	reportersTable,
 	storiesTable,
-	type Reporter,
-	type Story,
 } from "./airtable";
-import { env } from "./env";
 import { stageRequest } from "./blocks/approvals/stageRequest";
-import type Slack from "@slack/bolt";
-import TTLCache from "@isaacs/ttlcache";
+import { env } from "./env";
 
 export type Details = {
 	headline: string;

@@ -1,5 +1,5 @@
 import type Slack from "@slack/bolt";
-import { db, storiesTable, type Story } from "../airtable";
+import { type Story, db, storiesTable } from "../airtable";
 import { stageRequest } from "../blocks/approvals/stageRequest";
 import logger from "../logger";
 

@@ -1,20 +1,20 @@
 import type Slack from "@slack/bolt";
 import type { BlockAction } from "@slack/bolt";
-import logger from "../logger";
 import { db, storiesTable } from "../airtable";
 import {
 	draftStory,
-	stageStory,
-	updateStory,
 	getReporterBySlackId,
 	getStoriesByUserId,
+	stageStory,
+	updateStory,
 } from "../data";
+import logger from "../logger";
 import { richTextBlockToMrkdwn } from "../util";
 
 import notAReporter from "../blocks/appHome/notAReporter";
 import reporterHome from "../blocks/appHome/reporterHome";
-import storyModal from "../blocks/appHome/storyModal";
 import stageModal from "../blocks/appHome/stageModal";
+import storyModal from "../blocks/appHome/storyModal";
 
 export default async (app: Slack.App) => {
 	app.action("new-story-button", async ({ ack, client, body }) => {

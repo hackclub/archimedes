@@ -1,5 +1,5 @@
-import type { Story } from "../../airtable";
 import type Slack from "@slack/bolt";
+import type { Story } from "../../airtable";
 
 export default (approvedStories: Story[]): Slack.types.ModalView => {
 	return {

@@ -1,6 +1,6 @@
+import type Slack from "@slack/bolt";
 import { getStoriesByUserId } from "../../data";
 import logger from "../../logger";
-import type Slack from "@slack/bolt";
 
 const sortMap = {
 	Draft: 4,

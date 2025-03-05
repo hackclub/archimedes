@@ -1,8 +1,8 @@
-import { Text, Container, Heading, Hr } from "@react-email/components";
-import Layout from "./layout";
-import type { Story } from "../airtable";
+import { Container, Heading, Hr, Text } from "@react-email/components";
 import { Fragment } from "react/jsx-runtime";
 import { toHTML as unwrappedMrkdwnToHTML } from "slack-markdown";
+import type { Story } from "../airtable";
+import Layout from "./layout";
 
 interface Props {
 	intro: string;

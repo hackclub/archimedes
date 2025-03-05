@@ -1,12 +1,12 @@
 const { App } = await import("@slack/bolt");
 import { version } from "../package.json";
-import logger from "./logger";
 import { env } from "./env";
+import logger from "./logger";
 
-import * as events from "./events";
+import { LogLevel } from "@slack/bolt";
 import * as actions from "./actions";
 import * as commands from "./commands";
-import { LogLevel } from "@slack/bolt";
+import * as events from "./events";
 
 logger.debug(`Starting Archimedes v${version}`);
 const app = new App({

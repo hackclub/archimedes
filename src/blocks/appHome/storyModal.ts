@@ -1,5 +1,5 @@
-import type { Story } from "../../airtable";
 import type Slack from "@slack/bolt";
+import type { Story } from "../../airtable";
 
 export default (userId: string, story?: Story): Slack.types.ModalView => ({
 	type: "modal",

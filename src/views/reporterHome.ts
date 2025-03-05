@@ -1,7 +1,7 @@
 import type Slack from "@slack/bolt";
 import type { BlockAction } from "@slack/bolt";
-import { richTextBlockToMrkdwn } from "../util";
 import { draftStory, getReporterBySlackId } from "../data";
+import { richTextBlockToMrkdwn } from "../util";
 
 import reporterHome from "../blocks/appHome/reporterHome";
 import storyModal from "../blocks/appHome/storyModal";

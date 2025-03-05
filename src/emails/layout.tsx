@@ -1,13 +1,13 @@
 import {
+	Container,
 	Font,
 	Head,
-	Container,
-	Html,
-	Tailwind,
 	Heading,
-	Text,
 	Hr,
+	Html,
 	Link,
+	Tailwind,
+	Text,
 } from "@react-email/components";
 import type React from "react";
 
