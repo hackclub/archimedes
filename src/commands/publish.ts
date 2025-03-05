@@ -111,14 +111,14 @@ export default function (app: Slack.App) {
 				introMd,
 				conclusionMd,
 			),
-			sendNewsletter(
-				body.user.id,
-				orderedStories,
-				subject,
-				introMd,
-				conclusionMd,
-				client,
-			),
+			// sendNewsletter(
+			// 	body.user.id,
+			// 	orderedStories,
+			// 	subject,
+			// 	introMd,
+			// 	conclusionMd,
+			// 	client,
+			// ),
 		]);
 
 		// TODO: chunk these in batches of 10
