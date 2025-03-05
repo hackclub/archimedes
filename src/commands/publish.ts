@@ -215,6 +215,7 @@ async function sendNewsletter(
 	);
 	logger.debug({ requestedBy: userId }, "Sending newsletter");
 
+	const reporter = await getReporterBySlackId(userId);
 	await loopsClient.createCampaign({
 		emoji: "📰",
 		name: `Archimedes: ${subject}`,
@@ -222,8 +223,10 @@ async function sendNewsletter(
 		zipFile: generatedZip as unknown as File,
 		audienceFilter: config.loops.audienceFilter,
 		audienceSegmentId: config.loops.audienceSegmentId,
-		fromName: "Mahad Kalam",
-		fromEmail: "mahad",
-		replyToEmail: "mahad@hackclub.com",
+		fromName: reporter?.fullName || "Archimedes",
+		fromEmail: reporter?.emailUsername || "archimedes",
+		replyToEmail: reporter?.emailUsername
+			? `${reporter.emailUsername}@hackclub.com`
+			: "mahad+no-reporter-on-reply@hackclub.com",
 	});
 }

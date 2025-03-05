@@ -69,10 +69,16 @@ export default (
 					type: "button",
 					text: {
 						type: "plain_text",
-						text: index === orderedStories.length - 1 ? ":arrow_up: Move to Top" : ":arrow_down: Move Down",
+						text:
+							index === orderedStories.length - 1
+								? ":arrow_up: Move to Top"
+								: ":arrow_down: Move Down",
 						emoji: true,
 					},
-					action_id: index === orderedStories.length - 1 ? "move_story_to_top" : "move_story_down",
+					action_id:
+						index === orderedStories.length - 1
+							? "move_story_to_top"
+							: "move_story_down",
 					value: story.id,
 				},
 			})),
