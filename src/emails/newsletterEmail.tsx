@@ -49,8 +49,8 @@ export default function Email({ intro, conclusion, stories }: Props) {
                     }
                 `}
 			</style>
-			{/* biome-ignore lint/security/noDangerouslySetInnerHtml: no way around it :shrug: */}
 			<Text
+				/* biome-ignore lint/security/noDangerouslySetInnerHtml: no way around it :shrug: */
 				dangerouslySetInnerHTML={{ __html: introHtml }}
 				className="text-[16px]"
 			/>
@@ -59,10 +59,10 @@ export default function Email({ intro, conclusion, stories }: Props) {
 			<Container>
 				{mappedStories.map((story) => (
 					<Fragment key={story.id}>
-						{/* biome-ignore lint/security/noDangerouslySetInnerHtml: see above */}
 						<Heading
 							as="h2"
 							className="font-bold"
+							/* biome-ignore lint/security/noDangerouslySetInnerHtml: see above */
 							dangerouslySetInnerHTML={{ __html: story.headline }}
 						/>
 						{/* biome-ignore lint/security/noDangerouslySetInnerHtml: see above */}
@@ -72,8 +72,8 @@ export default function Email({ intro, conclusion, stories }: Props) {
 			</Container>
 
 			<Hr />
-			{/* biome-ignore lint/security/noDangerouslySetInnerHtml: no way around it :shrug: */}
 			<Text
+				/* biome-ignore lint/security/noDangerouslySetInnerHtml: no way around it :shrug: */
 				dangerouslySetInnerHTML={{ __html: conclusionHtml }}
 				className="text-[16px]"
 			/>
