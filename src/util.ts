@@ -21,6 +21,15 @@ export async function replaceAsync(
 	let i = 0;
 	return string.replace(regexp, () => replacements[i++]);
 }
+
+export function moveItem(fromIdx: number, toIdx: number, data: unknown[]) {
+	// remove `from` item and store it
+	const f = data.splice(fromIdx, 1)[0];
+	// insert stored item into position `to`
+	data.splice(toIdx, 0, f);
+	return data;
+}
+
 // #endregion
 
 // #region mrkdwn
