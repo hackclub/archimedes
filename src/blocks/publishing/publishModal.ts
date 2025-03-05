@@ -59,63 +59,23 @@ export default (
 					text: "*Story Order*\nYou can reorder the stories using the buttons below. The stories will appear in this order in the published message and email.",
 				},
 			},
-			...orderedStories.flatMap((story, index) => {
-				// biome-ignore lint/suspicious/noExplicitAny: Using any here because the Slack types are not properly exported
-				const blocks: any[] = [
-					{
-						type: "divider",
+			...orderedStories.map((story, index) => ({
+				type: "section",
+				text: {
+					type: "mrkdwn",
+					text: `*${index + 1}. ${story.headline}*\n${story.shortDescription.substring(0, 100)}${story.shortDescription.length > 100 ? "..." : ""}`,
+				},
+				accessory: {
+					type: "button",
+					text: {
+						type: "plain_text",
+						text: index === orderedStories.length - 1 ? ":arrow_up: Move to Top" : ":arrow_down: Move Down",
+						emoji: true,
 					},
-					{
-						type: "section",
-						text: {
-							type: "mrkdwn",
-							text: `*${index + 1}. ${story.headline}*\n${story.shortDescription.substring(0, 100)}${story.shortDescription.length > 100 ? "..." : ""}`,
-						},
-					},
-				];
-
-				// Add move up button if not the first story
-				if (index > 0) {
-					blocks.push({
-						type: "actions",
-						block_id: `move_up_${story.id}`,
-						elements: [
-							{
-								type: "button",
-								text: {
-									type: "plain_text",
-									text: "↑ Move Up",
-									emoji: true,
-								},
-								action_id: "move_story_up",
-								value: story.id,
-							},
-						],
-					});
-				}
-
-				// Add move down button if not the last story
-				if (index < orderedStories.length - 1) {
-					blocks.push({
-						type: "actions",
-						block_id: `move_down_${story.id}`,
-						elements: [
-							{
-								type: "button",
-								text: {
-									type: "plain_text",
-									text: "↓ Move Down",
-									emoji: true,
-								},
-								action_id: "move_story_down",
-								value: story.id,
-							},
-						],
-					});
-				}
-
-				return blocks;
-			}),
+					action_id: index === orderedStories.length - 1 ? "move_story_to_top" : "move_story_down",
+					value: story.id,
+				},
+			})),
 			{
 				type: "divider",
 			},
