@@ -25,8 +25,8 @@ interface UseMjml {
 
 interface UpdateCampaignAudience {
 	campaignId: string;
-	audienceFilter: Record<string, unknown>;
-	audienceSegmentId: string;
+	audienceFilter: Record<string, unknown> | null;
+	audienceSegmentId: string | null;
 }
 
 interface CampaignDetails {
