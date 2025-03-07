@@ -19,12 +19,13 @@ const stagingConfig: Config = {
 		audienceSegmentId: "cm7j9be4v01dkk2vxh63ey3h9",
 	},
 };
-const productionConfig: Config = {
+const _productionConfig: Config = {
 	loops: {
 		audienceFilter: null,
 		audienceSegmentId: null,
 	},
 };
-export const config =
-	process.env.NODE_ENV === "production" ? productionConfig : stagingConfig;
-// export const config = stagingConfig;
+
+// export const config =
+// 	process.env.NODE_ENV === "production" ? productionConfig : stagingConfig;
+export const config = stagingConfig;
