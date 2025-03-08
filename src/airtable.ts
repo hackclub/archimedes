@@ -3,7 +3,7 @@ import { AirtableTs, type Item, type Table } from "airtable-ts";
 import { z } from "zod";
 import { fromError } from "zod-validation-error";
 import { env } from "./env";
-import logger from "./logger";
+import { logger } from "./util";
 
 export const db = new AirtableTs({
 	apiKey: env.AIRTABLE_API_KEY,
@@ -44,6 +44,7 @@ export interface Story extends Item {
 	longArticle: string;
 	shortDescriptionRt: string;
 	longArticleRt: string;
+	image: string | null;
 	authors: string[];
 	readonly authorsName: string[] | null;
 	status: "Draft" | "Awaiting Review" | "Approved" | "Published";
@@ -65,6 +66,7 @@ export const storiesTable: Table<Story> = {
 		longArticle: "string",
 		shortDescriptionRt: "string",
 		longArticleRt: "string",
+		image: "string | null",
 		authors: "string[]",
 		authorsName: "string[] | null",
 		status: "string",

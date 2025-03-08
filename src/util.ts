@@ -1,5 +1,13 @@
+import pino from "pino";
 import type Slack from "@slack/bolt";
 import { getChannelNameById, getDisplayNameBySlackId } from "./data";
+import { env } from "./env";
+
+// #region Logger
+export const logger = pino({
+	level: env.LOG_LEVEL,
+});
+// #endregion
 
 // #region Misc
 export function chunkArray<T>(array: T[], chunkSize = 10): T[][] {
@@ -21,15 +29,6 @@ export async function replaceAsync(
 	let i = 0;
 	return string.replace(regexp, () => replacements[i++]);
 }
-
-export function moveItem(fromIdx: number, toIdx: number, data: unknown[]) {
-	// remove `from` item and store it
-	const f = data.splice(fromIdx, 1)[0];
-	// insert stored item into position `to`
-	data.splice(toIdx, 0, f);
-	return data;
-}
-
 // #endregion
 
 // #region mrkdwn

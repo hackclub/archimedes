@@ -8,8 +8,7 @@ import {
 	stageStory,
 	updateStory,
 } from "../data";
-import logger from "../logger";
-import { richTextBlockToMrkdwn } from "../util";
+import { logger, richTextBlockToMrkdwn } from "../util";
 
 import notAReporter from "../blocks/appHome/notAReporter";
 import reporterHome from "../blocks/appHome/reporterHome";

@@ -1,4 +1,5 @@
 import type { Story } from "../../airtable";
+import type Slack from "@slack/bolt";
 
 export function stageRequest(
 	story: Story,
@@ -27,6 +28,13 @@ export function stageRequest(
 					text: story.shortDescription,
 				},
 			},
+			story.image
+				? {
+						type: "image",
+						image_url: story.image,
+						alt_text: story.headline,
+					}
+				: undefined,
 			{
 				type: "divider",
 			},
@@ -74,6 +82,6 @@ export function stageRequest(
 							text: `Story *${status.toLowerCase()}* by <@${reviewerId}>`,
 						},
 					},
-		],
+		].filter(Boolean) as Slack.types.Block[],
 	};
 }

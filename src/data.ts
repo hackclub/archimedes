@@ -17,6 +17,7 @@ export type Details = {
 	longArticle: string;
 	longArticleRt: string;
 	reporterId: string;
+	image?: string;
 };
 
 export async function stageStory(client: Slack.webApi.WebClient, story: Story) {
@@ -33,27 +34,23 @@ export async function stageStory(client: Slack.webApi.WebClient, story: Story) {
 }
 
 export async function draftStory(details: Details) {
+	console.log(details);
 	await db.insert(storiesTable, {
-		headline: details.headline,
-		shortDescription: details.shortDescription,
-		shortDescriptionRt: details.shortDescriptionRt,
-		longArticle: details.longArticle,
-		longArticleRt: details.longArticleRt,
+		...details,
 		authors: [details.reporterId],
 		status: "Draft",
 		newsletters: [],
 		happenings: [],
+		image: details.image || null,
 	});
 }
 
 export async function updateStory(storyId: string, details: Details) {
+	console.log("deets", details);
 	await db.update(storiesTable, {
 		id: storyId,
-		headline: details.headline,
-		shortDescription: details.shortDescription,
-		longArticle: details.longArticle,
-		shortDescriptionRt: JSON.stringify(details.shortDescription),
-		longArticleRt: JSON.stringify(details.longArticle),
+		...details,
+		image: details.image || null,
 	});
 }
 

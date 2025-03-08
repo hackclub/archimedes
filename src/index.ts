@@ -1,7 +1,7 @@
 const { App } = await import("@slack/bolt");
 import { version } from "../package.json";
 import { env } from "./env";
-import logger from "./logger";
+import { logger } from "./util";
 
 import { LogLevel } from "@slack/bolt";
 import * as actions from "./actions";

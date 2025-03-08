@@ -44,6 +44,25 @@ export default (userId: string, story?: Story): Slack.types.ModalView => ({
 		},
 		{
 			type: "input",
+			block_id: "image_url_input",
+			optional: true,
+			element: {
+				type: "url_text_input",
+				action_id: "image_url",
+				initial_value: story?.image || undefined,
+				placeholder: {
+					type: "plain_text",
+					text: "e.g. https://cdn.skyfall.dev/...",
+				},
+			},
+			label: {
+				type: "plain_text",
+				text: "Image URL",
+				emoji: true,
+			},
+		},
+		{
+			type: "input",
 			block_id: "short_description_input",
 			element: {
 				type: "rich_text_input",
