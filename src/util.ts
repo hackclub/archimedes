@@ -1,5 +1,5 @@
-import pino from "pino";
 import type Slack from "@slack/bolt";
+import pino from "pino";
 import { getChannelNameById, getDisplayNameBySlackId } from "./data";
 import { env } from "./env";
 

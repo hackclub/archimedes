@@ -1,7 +1,7 @@
 import type Slack from "@slack/bolt";
 import { type Story, db, storiesTable } from "../airtable";
 import { stageRequest } from "../blocks/approvals/stageRequest";
-import logger from "../logger";
+import { logger } from "../util";
 
 async function sendResponseMessage(
 	story: Story,
