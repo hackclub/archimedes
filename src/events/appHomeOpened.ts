@@ -54,14 +54,8 @@ export default async (app: Slack.App) => {
 		await ack();
 
 		const userId: string = view.private_metadata;
-		// FIXME: BAD BAD BAD. NO. NEIN. NICHT GUT.
-		// However, I want to get this working first.
-		// This is a band-aid.
-		// This is not good.
-		// Mahad, please fix this.
 		const storyId =
-			view.state.values[Object.keys(view.state.values)[0]].select_input
-				.selected_option!.value;
+			view.state.values.story_selector.select_input.selected_option!.value;
 		const story = await db.get(storiesTable, storyId);
 		logger.debug(`(Stage Story) Updating story ${storyId}`);
 

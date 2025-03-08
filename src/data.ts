@@ -129,18 +129,22 @@ export async function publishStory(
 		sendNewsletter(slackId, stories, subject, introMd, conclusionMd, client),
 	]);
 
-	// TODO: chunk these in batches of 10
-	await db.airtable
-		.base(airtableJson.data!.baseId)
-		.table(airtableJson.data!.stories!.tableId)
-		.update(
-			stories.map((story) => ({
-				id: story.id,
-				fields: {
-					status: "Published",
-				},
-			})),
-		);
+	const chunkSize = 10; // Airtable has a limit of 10 updates per request
+	for (let i = 0; i < stories.length; i += chunkSize) {
+		const chunk = stories.slice(i, i + chunkSize);
+		await db.airtable
+			.base(airtableJson.data!.baseId)
+			.table(airtableJson.data!.stories!.tableId)
+			.update(
+				chunk.map((story) => ({
+					id: story.id,
+					fields: {
+						status: "Published",
+					},
+				})),
+			);
+	}
+
 	logger.debug(`Published ${stories.length} stories!`);
 }
 
