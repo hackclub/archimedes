@@ -76,14 +76,16 @@ export default function Layout(
 						Hack Club, a 501(c)(3) nonprofit
 						<br />
 						15 Falls Road, Shelburne, VT 05482
+						<br />
+						<Link
+							href="{unsubscribe_link}"
+							className="text-sm font-semibold text-gray-500"
+						>
+							Manage email preferences
+						</Link>
 					</Text>
 					{/* Added by Loops */}
-					<Link
-						href="{unsubscribe_link}"
-						className="text-sm font-semibold text-gray-500"
-					>
-						Manage email preferences
-					</Link>
+
 				</Tailwind>
 			</Container>
 		</Html>

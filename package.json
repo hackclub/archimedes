@@ -1,13 +1,13 @@
 {
 	"name": "archimedes",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"module": "src/index.ts",
 	"type": "module",
 	"scripts": {
 		"dev": "LOG_LEVEL=debug bun --watch . | pino-pretty",
 		"start": "LOG_LEVEL=debug bun . | pino-pretty",
 		"dev:emails": "email dev --dir src/emails",
-		"check": "biome check",
+		"check": "biome check && tsc",
 		"format": "biome format --write",
 		"pino-pretty": "pino-pretty"
 	},

@@ -1,4 +1,4 @@
-import { Container, Heading, Hr, Text } from "@react-email/components";
+import { Container, Heading, Hr, Text, Img } from "@react-email/components";
 import { Fragment } from "react/jsx-runtime";
 import { toHTML as unwrappedMrkdwnToHTML } from "slack-markdown";
 import type { Story } from "../airtable";
@@ -65,6 +65,13 @@ export default function Email({ intro, conclusion, stories }: Props) {
 							/* biome-ignore lint/security/noDangerouslySetInnerHtml: see above */
 							dangerouslySetInnerHTML={{ __html: story.headline }}
 						/>
+						{story.image && (
+							<Img
+								src={story.image}
+								className="max-w-full mb-4"
+								alt={story.headline}
+							/>
+						)}
 						{/* biome-ignore lint/security/noDangerouslySetInnerHtml: see above */}
 						<div dangerouslySetInnerHTML={{ __html: story.longArticle }} />
 					</Fragment>

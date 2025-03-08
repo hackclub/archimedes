@@ -11,7 +11,7 @@ import {
 import { logger, richTextBlockToMrkdwn } from "../util";
 
 import notAReporter from "../blocks/appHome/notAReporter";
-import reporterHome from "../blocks/appHome/reporterHome";
+import reporterHome from "../views/reporterHome";
 import stageModal from "../blocks/appHome/stageModal";
 import storyModal from "../blocks/appHome/storyModal";
 
@@ -91,6 +91,8 @@ export default async (app: Slack.App) => {
 		const longArticleRt =
 			view.state.values.long_article_input.long_article.rich_text_value!;
 		const longArticle = richTextBlockToMrkdwn(longArticleRt);
+		const image =
+			view.state.values.image_url_input.image_url.value || undefined;
 
 		logger.debug(`Fetching reporter for ${userId}`);
 		const reporter = await getReporterBySlackId(userId);
@@ -104,6 +106,7 @@ export default async (app: Slack.App) => {
 				shortDescriptionRt: JSON.stringify(shortDescriptionRt),
 				longArticleRt: JSON.stringify(longArticleRt),
 				reporterId: reporter!.id,
+				image,
 			});
 		} else {
 			logger.debug(`Inserting story for ${userId} (${headline})`);
@@ -114,6 +117,7 @@ export default async (app: Slack.App) => {
 				shortDescriptionRt: JSON.stringify(shortDescriptionRt),
 				longArticleRt: JSON.stringify(longArticleRt),
 				reporterId: reporter!.id,
+				image,
 			});
 		}
 
