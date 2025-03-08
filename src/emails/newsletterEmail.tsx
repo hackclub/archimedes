@@ -1,4 +1,4 @@
-import { Container, Heading, Hr, Text, Img } from "@react-email/components";
+import { Container, Heading, Hr, Img, Text } from "@react-email/components";
 import { Fragment } from "react/jsx-runtime";
 import { toHTML as unwrappedMrkdwnToHTML } from "slack-markdown";
 import type { Story } from "../airtable";

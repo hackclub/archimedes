@@ -1,17 +1,10 @@
-import JSZip from "jszip";
-import LoopsClient from "loops-campaign-api";
-import buildHappeningsMessage from "../blocks/publishing/happeningsMessage";
 import publishModal from "../blocks/publishing/publishModal";
-import Email from "../emails/newsletterEmail";
-
-import { render } from "@react-email/components";
-import { getReporterBySlackId } from "../data";
+import { getReporterBySlackId, publishStory } from "../data";
 import { env } from "../env";
-import { config } from "../featureConfig";
-import { logger, richTextBlockToMrkdwn, runPasses } from "../util";
+import { logger, richTextBlockToMrkdwn } from "../util";
 
 import type Slack from "@slack/bolt";
-import { type Story, airtableJson, db, storiesTable } from "../airtable";
+import { type Story, db, storiesTable } from "../airtable";
 
 export default function (app: Slack.App) {
 	const PUBLISH_COMMAND =
@@ -104,130 +97,13 @@ export default function (app: Slack.App) {
 			// Fall back to using the default order
 		}
 
-		await Promise.allSettled([
-			sendHappeningsMessage(
-				client,
-				body.user.id,
-				orderedStories,
-				introMd,
-				conclusionMd,
-			),
-			sendNewsletter(
-				body.user.id,
-				orderedStories,
-				subject,
-				introMd,
-				conclusionMd,
-				client,
-			),
-		]);
-
-		// TODO: chunk these in batches of 10
-		await db.airtable
-			.base(airtableJson.data!.baseId)
-			.table(airtableJson.data!.stories!.tableId)
-			.update(
-				approvedStories.map((story) => ({
-					id: story.id,
-					fields: {
-						status: "Published",
-					},
-				})),
-			);
-		logger.debug(`Published ${approvedStories.length} stories!`);
-	});
-}
-
-async function sendHappeningsMessage(
-	client: Slack.webApi.WebClient,
-	userId: string,
-	stories: Story[],
-	introMd: string,
-	conclusionMd: string,
-) {
-	const userDetails = await client.users.info({
-		user: userId,
-	});
-
-	await client.chat.postMessage({
-		channel: env.HAPPENINGS_CHANNEL_ID,
-		icon_url: userDetails.user?.profile?.image_original,
-		username:
-			userDetails.user?.profile?.display_name ||
-			userDetails.user?.name ||
-			"Archimedes",
-		unfurl_links: false,
-		unfurl_media: false,
-		...buildHappeningsMessage(introMd, conclusionMd, stories),
-	});
-	logger.debug({ requestedBy: userId }, "Sent happenings message");
-}
-
-const loopsClient = new LoopsClient(env.LOOPS_SESSION_TOKEN);
-async function sendNewsletter(
-	userId: string,
-	stories: Story[],
-	subject: string,
-	introMd: string,
-	conclusionMd: string,
-	client: Slack.webApi.WebClient,
-) {
-	logger.debug(
-		{ requestedBy: userId },
-		"sendNewsletter: Running passes on mrkdwn",
-	);
-	const finalIntroMd = await runPasses(introMd, client);
-	const finalConclusionMd = await runPasses(conclusionMd, client);
-	logger.debug(
-		{ requestedBy: userId },
-		"sendNewsletter: Finished passes on mrkdwn",
-	);
-
-	const emailHtml = await render(
-		Email({
-			intro: finalIntroMd,
-			conclusion: finalConclusionMd,
-			stories: await Promise.all(
-				stories.map(async (story) => ({
-					...story,
-					headline: await runPasses(story.headline, client),
-					longArticle: await runPasses(story.longArticle, client),
-				})),
-			),
-			// intro: introMd, conclusion: conclusionMd, stories,
-		}),
-	);
-	const zip = new JSZip();
-	zip.file(
-		"index.mjml",
-		`
-	<mjml>
-  		<mj-body>
-    		<mj-raw>
-      			${emailHtml}
-    		</mj-raw>
-  		</mj-body>
-	</mjml>
-	`,
-	);
-	const generatedZip = new File(
-		[await zip.generateAsync({ type: "blob" })],
-		"mjml.zip",
-	);
-	logger.debug({ requestedBy: userId }, "Sending newsletter");
-
-	const reporter = await getReporterBySlackId(userId);
-	await loopsClient.createAndSendCampaign({
-		emoji: "📰",
-		name: `Archimedes: ${subject}`,
-		subject,
-		zipFile: generatedZip as unknown as File,
-		audienceFilter: config.loops.audienceFilter,
-		audienceSegmentId: config.loops.audienceSegmentId,
-		fromName: reporter?.fullName || "Archimedes",
-		fromEmailUsername: reporter?.emailUsername || "archimedes",
-		replyToEmail: reporter?.emailUsername
-			? `${reporter.emailUsername}@hackclub.com`
-			: "mahad+no-reporter-on-reply@hackclub.com",
+		await publishStory(
+			client,
+			body.user.id,
+			orderedStories,
+			subject,
+			introMd,
+			conclusionMd,
+		);
 	});
 }

@@ -85,7 +85,6 @@ export default function Layout(
 						</Link>
 					</Text>
 					{/* Added by Loops */}
-
 				</Tailwind>
 			</Container>
 		</Html>

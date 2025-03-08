@@ -1,6 +1,6 @@
+import type { Story } from "../airtable";
 // For dev purposes :)
 import Email from "./newsletterEmail";
-import type { Story } from "../airtable";
 
 export default function NewsletterEmailPreview() {
 	const stories: Pick<Story, "id" | "headline" | "longArticle" | "image">[] = [

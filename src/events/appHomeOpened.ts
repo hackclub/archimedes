@@ -11,9 +11,9 @@ import {
 import { logger, richTextBlockToMrkdwn } from "../util";
 
 import notAReporter from "../blocks/appHome/notAReporter";
-import reporterHome from "../views/reporterHome";
 import stageModal from "../blocks/appHome/stageModal";
 import storyModal from "../blocks/appHome/storyModal";
+import reporterHome from "../views/reporterHome";
 
 export default async (app: Slack.App) => {
 	app.action("new-story-button", async ({ ack, client, body }) => {
