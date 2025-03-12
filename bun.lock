@@ -4,7 +4,6 @@
     "": {
       "name": "archimedes",
       "dependencies": {
-        "@fontsource/inter": "^5.2.5",
         "@isaacs/ttlcache": "^1.4.1",
         "@react-email/components": "0.0.32",
         "@slack/bolt": "^4.2.1",
@@ -14,7 +13,6 @@
         "pino": "^9.6.0",
         "pino-pretty": "^13.0.0",
         "react": "19.0.0",
-        "react-dom": "19.0.0",
         "react-email": "3.0.6",
         "slack-markdown": "^0.3.0",
         "zod": "^3.24.2",
@@ -131,8 +129,6 @@
     "@esbuild/win32-ia32": ["@esbuild/win32-ia32@0.19.11", "", { "os": "win32", "cpu": "ia32" }, "sha512-6YOrWS+sDJDmshdBIQU+Uoyh7pQKrdykdefC1avn76ss5c+RN6gut3LZA4E2cH5xUEp5/cA0+YxRaVtRAb0xBg=="],
 
     "@esbuild/win32-x64": ["@esbuild/win32-x64@0.19.11", "", { "os": "win32", "cpu": "x64" }, "sha512-vfkhltrjCAb603XaFhqhAF4LGDi2M4OrCRrFusyQ+iTLQ/o60QQXxc9cZC/FFpihBI9N1Grn6SMKVJ4KP7Fuiw=="],
-
-    "@fontsource/inter": ["@fontsource/inter@5.2.5", "", {}, "sha512-kbsPKj0S4p44JdYRFiW78Td8Ge2sBVxi/PIBwmih+RpSXUdvS9nbs1HIiuUSPtRMi14CqLEZ/fbk7dj7vni1Sg=="],
 
     "@img/sharp-darwin-arm64": ["@img/sharp-darwin-arm64@0.33.5", "", { "optionalDependencies": { "@img/sharp-libvips-darwin-arm64": "1.0.4" }, "os": "darwin", "cpu": "arm64" }, "sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ=="],
 
