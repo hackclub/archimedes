@@ -9,6 +9,14 @@ export default (intro: string, conclusion: string, stories: Story[]) => {
 	// was really annoying to actually *read* the newsletter, so now we just send it as one big mrkdwn message.
 	return {
 		text: `${intro}\n\n${storyMrkdwn}\n\n${conclusion}`,
-		type: "mrkdwn",
+		blocks: [
+			{
+				type: "section",
+				text: {
+					type: "mrkdwn",
+					text: `${intro}\n\n${storyMrkdwn}\n\n${conclusion}`,
+				},
+			},
+		],
 	};
 };
