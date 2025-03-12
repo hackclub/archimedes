@@ -72,8 +72,11 @@ export default function Email({ intro, conclusion, stories }: Props) {
 								alt={story.headline}
 							/>
 						)}
-						{/* biome-ignore lint/security/noDangerouslySetInnerHtml: see above */}
-						<div dangerouslySetInnerHTML={{ __html: story.longArticle }} />
+						<div
+							className="text-[16px]"
+							/* biome-ignore lint/security/noDangerouslySetInnerHtml: see above */
+							dangerouslySetInnerHTML={{ __html: story.longArticle }}
+						/>
 					</Fragment>
 				))}
 			</Container>
