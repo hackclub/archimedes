@@ -122,11 +122,19 @@ export async function publishStory(
 	stories: Story[],
 	subject: string,
 	introMd: string,
+	emailIntroMd: string,
 	conclusionMd: string,
 ) {
 	await Promise.allSettled([
 		sendHappeningsMessage(client, slackId, stories, introMd, conclusionMd),
-		sendNewsletter(slackId, stories, subject, introMd, conclusionMd, client),
+		sendNewsletter(
+			slackId,
+			stories,
+			subject,
+			emailIntroMd,
+			conclusionMd,
+			client,
+		),
 	]);
 
 	const chunkSize = 10; // Airtable has a limit of 10 updates per request

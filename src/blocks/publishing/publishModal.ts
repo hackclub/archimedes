@@ -117,6 +117,23 @@ export default (
 			},
 			{
 				type: "input",
+				block_id: "email_intro_input",
+				element: {
+					type: "rich_text_input",
+					action_id: "email_intro",
+				},
+				hint: {
+					text: "This will be the intro of the email, not the Slack message.",
+					type: "plain_text",
+				},
+				label: {
+					type: "plain_text",
+					text: "Email intro",
+					emoji: true,
+				},
+			},
+			{
+				type: "input",
 				block_id: "conclusion_input",
 				element: {
 					type: "rich_text_input",

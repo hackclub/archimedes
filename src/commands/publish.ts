@@ -55,6 +55,9 @@ export default function (app: Slack.App) {
 		const introMd = richTextBlockToMrkdwn(
 			view.state.values.intro_input.intro.rich_text_value!,
 		);
+		const emailIntroMd = richTextBlockToMrkdwn(
+			view.state.values.email_intro_input.email_intro.rich_text_value!,
+		);
 		const conclusionMd = richTextBlockToMrkdwn(
 			view.state.values.conclusion_input.conclusion.rich_text_value!,
 		);
@@ -103,6 +106,7 @@ export default function (app: Slack.App) {
 			orderedStories,
 			subject,
 			introMd,
+			emailIntroMd,
 			conclusionMd,
 		);
 	});
