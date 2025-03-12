@@ -22,7 +22,7 @@ const mrkdwnToHTML = (mrkdwn: string, largeText = false) => {
                 src="https://cachet.dunkirk.sh/emojis/${(emojiName as string).toLowerCase()}/r"
                 height="${imageSize}"
                 width="${imageSize}"
-                style="vertical-align: baseline; height: auto; position: relative; overflow: visible; align-items: center; display: inline-flex;"
+                style="vertical-align: middle; height: ${imageSize}px; width: ${imageSize}px; margin: 0 1px; position: relative; top: -2px; display: inline-block; filter: none !important;"
                 alt=":${emojiName}: emoji"
             />
         `,
