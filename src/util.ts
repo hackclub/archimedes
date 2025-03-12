@@ -182,7 +182,7 @@ async function usergroupIdsToNamesPass(
   md: string,
   client: Slack.webApi.WebClient
 ): Promise<string> {
-  return replaceAsync(md, /<!subteam^([A-Z0-9]*)>/g, async (matches) => {
+  return replaceAsync(md, /<!subteam\^([A-Z0-9]*)>/g, async (matches) => {
     const usergroupId = matches[1];
     const usergroupName = await getUsergroupNameById(usergroupId, client);
     //const usergroupName = "PLACEHOLDER-NAME"
