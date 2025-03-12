@@ -184,6 +184,7 @@ export async function draftStory(details: Details) {
 export async function updateStory(storyId: string, details: Details) {
 	await db.update(storiesTable, {
 		id: storyId,
+		status: "Draft",
 		...details,
 		image: details.image || null,
 	});
