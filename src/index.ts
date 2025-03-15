@@ -1,8 +1,8 @@
 const { App } = await import("@slack/bolt");
 import { version } from "../package.json";
+import { db, tokensTable } from "./airtable";
 import { env } from "./env";
 import { AUTHORIZE_URL, logger } from "./util";
-import { db, tokensTable } from "./airtable";
 
 import { LogLevel } from "@slack/bolt";
 import * as actions from "./actions";
