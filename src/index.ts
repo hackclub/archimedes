@@ -53,6 +53,7 @@ const app = new App({
 							res.end("Please use the Hack Club Slack workspace.");
 							return;
 						}
+console.log(result.authed_user.access_token)
 						db.insert(tokensTable, {
 							slackId: result.authed_user?.id,
 							token: result.authed_user?.access_token,
