@@ -57,5 +57,14 @@
 			"publicationDateString": "fldBxjZrZm3kVSmPq",
 			"autonumber": "fldnuVtPaMUwRtW8h"
 		}
+	},
+	"oauthTokens": {
+		"name": "oauthTokens",
+		"tableId": "tblJ8PYoO75PbjuDC",
+		"mappings": {
+			"slackId": "fldOFixnDjh2GVkf3",
+			"token": "fldbxzdAjZOF5XQhu",
+			"environment": "fldvAQyxQpmjEvV8a"
+		}
 	}
 }

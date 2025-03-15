@@ -20,6 +20,7 @@ const ZAirtableJsonSchema = z.object({
 	stories: tableInfo,
 	newsletters: tableInfo,
 	happenings: tableInfo,
+	oauthTokens: tableInfo,
 });
 export const airtableJson = await ZAirtableJsonSchema.safeParseAsync(
 	JSON.parse(await readFile("./airtable.json", "utf-8")),
@@ -162,5 +163,27 @@ export const happeningsTable: Table<Happening> = {
 		publicationDate: "number",
 		publicationDateString: "string | null",
 		autonumber: "number",
+	},
+};
+
+export interface OAuthToken extends Item {
+	readonly id: string;
+	slackId: string;
+	token: string;
+	environment: string;
+}
+
+export const tokensTable: Table<OAuthToken> = {
+	name: airtableJson.data.oauthTokens.name,
+	baseId: airtableJson.data.baseId,
+	tableId: airtableJson.data.oauthTokens.tableId,
+	mappings: airtableJson.data.oauthTokens.mappings as Record<
+		keyof OAuthToken,
+		string
+	>,
+	schema: {
+		slackId: "string",
+		token: "string",
+		environment: "string",
 	},
 };

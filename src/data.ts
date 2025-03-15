@@ -5,13 +5,14 @@ import buildHappeningsMessage from "./blocks/publishing/happeningsMessage";
 import Email from "./emails/newsletterEmail";
 
 import { render } from "@react-email/components";
-import type Slack from "@slack/bolt";
+import Slack from "@slack/bolt";
 import {
 	type Reporter,
 	type Story,
 	db,
 	reportersTable,
 	storiesTable,
+	tokensTable,
 } from "./airtable";
 import { airtableJson } from "./airtable";
 import { stageRequest } from "./blocks/approvals/stageRequest";
@@ -29,17 +30,18 @@ async function sendHappeningsMessage(
 	introMd: string,
 	conclusionMd: string,
 ) {
-	const userDetails = await client.users.info({
-		user: userId,
-	});
-
-	await client.chat.postMessage({
+	const tokenRecord = (
+		await db.scan(tokensTable, {
+			filterByFormula: `AND({Slack ID} = "${userId}", {Environment} = "${env.NODE_ENV}")`,
+		})
+	)[0];
+	if (!tokenRecord) {
+		throw new Error("No token found for user");
+	}
+	// TODO: Do I need to make a new client here?
+	const userClient = new Slack.webApi.WebClient(tokenRecord.token);
+	await userClient.chat.postMessage({
 		channel: env.HAPPENINGS_CHANNEL_ID,
-		icon_url: userDetails.user?.profile?.image_original,
-		username:
-			userDetails.user?.profile?.display_name ||
-			userDetails.user?.name ||
-			"Archimedes",
 		unfurl_links: false,
 		unfurl_media: false,
 		...buildHappeningsMessage(introMd, conclusionMd, stories),
