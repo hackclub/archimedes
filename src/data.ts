@@ -108,11 +108,9 @@ async function sendNewsletter(
 		zipFile: generatedZip as unknown as File,
 		audienceFilter: config.loops.audienceFilter,
 		audienceSegmentId: config.loops.audienceSegmentId,
-		fromName: reporter?.fullName || "Archimedes",
+		fromName: reporter?.fullName ? `${reporter?.fullName} (Hack Club)` : "Archimedes",
 		fromEmailUsername: reporter?.emailUsername || "archimedes",
-		replyToEmail: reporter?.emailUsername
-			? `${reporter.emailUsername}@hackclub.com`
-			: "mahad+no-reporter-on-reply@hackclub.com",
+		replyToEmail: "newspaper@hackclub.com",
 	});
 }
 
