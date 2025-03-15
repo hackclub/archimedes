@@ -55,7 +55,7 @@ const app = new App({
 						}
 						db.insert(tokensTable, {
 							slackId: result.authed_user?.id,
-							token: result.access_token,
+							token: result.authed_user?.access_token,
 							environment: env.NODE_ENV,
 						}).then(() => {
 							res.writeHead(200);
