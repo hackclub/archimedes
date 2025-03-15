@@ -35,17 +35,25 @@ async function sendHappeningsMessage(
 			filterByFormula: `AND({Slack ID} = "${userId}", {Environment} = "${env.NODE_ENV}")`,
 		})
 	)[0];
-	if (!tokenRecord) {
-		throw new Error("No token found for user");
+	if (tokenRecord) {
+		// TODO: Do I need to make a new client here?
+		const userClient = new Slack.webApi.WebClient(tokenRecord.token);
+		await userClient.chat.postMessage({
+			channel: env.HAPPENINGS_CHANNEL_ID,
+			unfurl_links: false,
+			unfurl_media: false,
+			...buildHappeningsMessage(introMd, conclusionMd, stories),
+		});
+	} else {
+		// The show must go on!
+		await client.chat.postMessage({
+			channel: env.HAPPENINGS_CHANNEL_ID,
+			unfurl_links: false,
+			unfurl_media: false,
+			...buildHappeningsMessage(introMd, conclusionMd, stories),
+		});
 	}
-	// TODO: Do I need to make a new client here?
-	const userClient = new Slack.webApi.WebClient(tokenRecord.token);
-	await userClient.chat.postMessage({
-		channel: env.HAPPENINGS_CHANNEL_ID,
-		unfurl_links: false,
-		unfurl_media: false,
-		...buildHappeningsMessage(introMd, conclusionMd, stories),
-	});
+
 	logger.debug({ requestedBy: userId }, "Sent happenings message");
 }
 
@@ -110,7 +118,9 @@ async function sendNewsletter(
 		zipFile: generatedZip as unknown as File,
 		audienceFilter: config.loops.audienceFilter,
 		audienceSegmentId: config.loops.audienceSegmentId,
-		fromName: reporter?.fullName ? `${reporter?.fullName} (Hack Club)` : "Archimedes",
+		fromName: reporter?.fullName
+			? `${reporter?.fullName} (Hack Club)`
+			: "Archimedes",
 		fromEmailUsername: reporter?.emailUsername || "archimedes",
 		replyToEmail: "newspaper@hackclub.com",
 	});
