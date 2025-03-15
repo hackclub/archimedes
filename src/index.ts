@@ -1,7 +1,7 @@
 const { App } = await import("@slack/bolt");
 import { version } from "../package.json";
 import { env } from "./env";
-import { logger } from "./util";
+import { AUTHORIZE_URL, logger } from "./util";
 import { db, tokensTable } from "./airtable";
 
 import { LogLevel } from "@slack/bolt";
@@ -66,6 +66,14 @@ const app = new App({
 						res.writeHead(500);
 						res.end(`Error: ${error.message}`);
 					});
+			},
+		},
+		{
+			path: "/login",
+			method: ["GET"],
+			handler: (_, res) => {
+				res.writeHead(302, { Location: AUTHORIZE_URL });
+				res.end();
 			},
 		},
 	],

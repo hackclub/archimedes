@@ -33,6 +33,8 @@ export async function replaceAsync(
 	let i = 0;
 	return string.replace(regexp, () => replacements[i++]);
 }
+
+export const AUTHORIZE_URL = `https://app.slack.com/oauth/v2/authorize?client_id=${env.SLACK_CLIENT_ID}&redirect_uri=${env.SLACK_REDIRECT_URI}&response_type=code&scope=chat:write`;
 // #endregion
 
 // #region mrkdwn
