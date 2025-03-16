@@ -59,8 +59,10 @@ const app = new App({
 							token: result.authed_user?.access_token,
 							environment: env.NODE_ENV,
 						}).then(() => {
-							res.writeHead(200);
-							res.end("Done! You can close this window.");
+							res.writeHead(302, {
+								Location: "https://skyfall.dev/misc/archimedes/authorized",
+							});
+							res.end();
 						});
 					})
 					.catch((error) => {
@@ -74,6 +76,15 @@ const app = new App({
 			method: ["GET"],
 			handler: (_, res) => {
 				res.writeHead(302, { Location: AUTHORIZE_URL });
+				res.end();
+			},
+		},
+		{
+			// Matches all other routes
+			path: "/{*rest}",
+			method: ["GET"],
+			handler: (_, res) => {
+				res.writeHead(302, { Location: "https://skyfall.dev/misc/archimedes" });
 				res.end();
 			},
 		},
