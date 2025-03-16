@@ -41,6 +41,7 @@ const app = new App({
 						code,
 						client_id: env.SLACK_CLIENT_ID,
 						client_secret: env.SLACK_CLIENT_SECRET,
+						redirect_uri: env.SLACK_REDIRECT_URI,
 					})
 					.then((result) => {
 						if (!result.ok) {
