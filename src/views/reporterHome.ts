@@ -10,7 +10,9 @@ const sortMap = {
 };
 export default async (firstName: string, slackId: string) => {
 	logger.debug(`Generating reporter home for ${firstName} (${slackId})`);
-	const stories = await getStoriesByUserId(slackId);
+	const stories = (await getStoriesByUserId(slackId)).filter(
+		(story) => story.status !== "Published",
+	);
 
 	const storyBlocks =
 		stories.length === 0
@@ -24,7 +26,6 @@ export default async (firstName: string, slackId: string) => {
 					},
 				]
 			: stories
-					.filter((story) => story.status !== "Published")
 					.sort((a, b) => sortMap[b.status] - sortMap[a.status])
 					.map((story) => {
 						return {
