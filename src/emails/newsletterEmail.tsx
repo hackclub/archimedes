@@ -89,20 +89,20 @@ export default function Email({ intro, conclusion, stories }: Props) {
 			<Tailwind>
 				<Body className="bg-gray-100 font-['Phantom Sans',Helvetica,sans-serif]">
 					<Container className="mx-auto my-[40px] max-w-[600px] rounded-[8px] bg-white p-[20px]">
-						{/* Header */}
-						<Img
-							src="https://new.email/static/app/placeholder.png"
-							alt="Hack Club Logo"
-							width="120"
-							height="40"
-							className="w-[120px] h-auto object-cover"
-						/>
-
 						{/* Intro Section */}
 						<Section className="mt-[32px]">
-							<Heading className="text-[24px] font-bold text-[#ec3750] m-0 font-['Phantom Sans',Helvetica,sans-serif]">
-								Welcome back to Happenings!👋
-							</Heading>
+							<div className="flex items-center">
+								<Img
+									src="https://assets.hackclub.com/icon-rounded.png"
+									alt="Hack Club Logo"
+									width="48"
+									height="48"
+									className="w-[48px] h-auto object-cover"
+								/>
+								<Heading className="text-[24px] font-bold text-[#ec3750] m-0 ml-[16px] font-['Phantom Sans',Helvetica,sans-serif]">
+									Welcome back to Happenings!👋
+								</Heading>
+							</div>
 							<Text
 								className="text-[16px] leading-[24px] text-gray-700 font-['Phantom Sans',Helvetica,sans-serif]"
 								// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
