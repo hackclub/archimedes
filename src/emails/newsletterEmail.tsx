@@ -1,8 +1,20 @@
-import { Container, Heading, Hr, Img, Text } from "@react-email/components";
-import { Fragment } from "react/jsx-runtime";
 import { toHTML as unwrappedMrkdwnToHTML } from "slack-markdown";
 import type { Story } from "../airtable";
-import Layout from "./layout";
+import {
+	Body,
+	Container,
+	Font,
+	Head,
+	Heading,
+	Hr,
+	Html,
+	Img,
+	Link,
+	Preview,
+	Section,
+	Text,
+	Tailwind,
+} from '@react-email/components';
 
 interface Props {
 	intro: string;
@@ -40,53 +52,115 @@ export default function Email({ intro, conclusion, stories }: Props) {
 	const conclusionHtml = mrkdwnToHTML(conclusion);
 
 	return (
-		<Layout>
-			<style>
-				{`
-                    html, body {
-                        font-size: 16px;
-                        line-height: 1.46668;
-                    }
-                `}
-			</style>
-			<Text
-				/* biome-ignore lint/security/noDangerouslySetInnerHtml: no way around it :shrug: */
-				dangerouslySetInnerHTML={{ __html: introHtml }}
-				className="text-[16px]"
-			/>
-			<Hr />
-
-			<Container>
-				{mappedStories.map((story) => (
-					<Fragment key={story.id}>
-						<Heading
-							as="h2"
-							className="font-bold"
-							/* biome-ignore lint/security/noDangerouslySetInnerHtml: see above */
-							dangerouslySetInnerHTML={{ __html: story.headline }}
+		<Html>
+			<Head>
+				<Font
+					fontFamily="Phantom Sans"
+					fallbackFontFamily="Helvetica"
+					webFont={{
+						url: 'https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2',
+						format: 'woff2',
+					}}
+					fontWeight={400}
+					fontStyle="normal"
+				/>
+				<Font
+					fontFamily="Phantom Sans"
+					fallbackFontFamily="Helvetica"
+					webFont={{
+						url: 'https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff2',
+						format: 'woff2',
+					}}
+					fontWeight={700}
+					fontStyle="normal"
+				/>
+				<Font
+					fontFamily="Phantom Sans"
+					fallbackFontFamily="Helvetica"
+					webFont={{
+						url: 'https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Italic.woff2',
+						format: 'woff2',
+					}}
+					fontWeight={400}
+					fontStyle="italic"
+				/>
+			</Head>
+			<Preview>{intro}</Preview>
+			<Tailwind>
+				<Body className="bg-gray-100 font-['Phantom Sans',Helvetica,sans-serif]">
+					<Container className="mx-auto my-[40px] max-w-[600px] rounded-[8px] bg-white p-[20px]">
+						{/* Header */}
+						<Img
+							src="https://new.email/static/app/placeholder.png"
+							alt="Hack Club Logo"
+							width="120"
+							height="40"
+							className="w-[120px] h-auto object-cover"
 						/>
-						{story.image && (
-							<Img
-								src={story.image}
-								className="max-w-full mb-4"
-								alt={story.headline}
-							/>
-						)}
-						<div
-							className="text-[16px]"
-							/* biome-ignore lint/security/noDangerouslySetInnerHtml: see above */
-							dangerouslySetInnerHTML={{ __html: story.longArticle }}
-						/>
-					</Fragment>
-				))}
-			</Container>
 
-			<Hr />
-			<Text
-				/* biome-ignore lint/security/noDangerouslySetInnerHtml: no way around it :shrug: */
-				dangerouslySetInnerHTML={{ __html: conclusionHtml }}
-				className="text-[16px]"
-			/>
-		</Layout>
+						{/* Intro Section */}
+						<Section className="mt-[32px]">
+							<Heading className="text-[24px] font-bold text-[#ec3750] m-0 font-['Phantom Sans',Helvetica,sans-serif]">
+								Welcome back to Happenings!👋
+							</Heading>
+							<Text className="text-[16px] leading-[24px] text-gray-700 font-['Phantom Sans',Helvetica,sans-serif]" dangerouslySetInnerHTML={{ __html: introHtml }} />
+						</Section>
+
+						{mappedStories.map((story) => (
+							<>
+								<Section key={story.id} className="mt-[24px]">
+									<Heading className="text-[20px] font-bold text-[#ec3750] m-0 font-['Phantom Sans',Helvetica,sans-serif]" dangerouslySetInnerHTML={{ __html: story.headline }} />
+									{story.image && (
+										<Img
+											src={story.image}
+											alt={story.headline}
+											className="w-full h-auto object-cover my-[16px] rounded-[8px]"
+										/>
+									)}
+									<Text className="text-[16px] leading-[24px] text-gray-700 font-['Phantom Sans',Helvetica,sans-serif]" dangerouslySetInnerHTML={{ __html: story.longArticle }} />
+									{/* <Button
+									href={story.link}
+									className="bg-[#ec3750] text-white font-bold py-[12px] px-[20px] rounded-[8px] mt-[16px] box-border font-['Phantom Sans',Helvetica,sans-serif]"
+								>
+									See All Projects
+								</Button> */}
+								</Section>
+								<Hr key={story.id} className="border border-gray-200 my-[24px]" />
+							</>
+						))}
+
+						{/* Conclusion */}
+						<Section className="mt-[24px] bg-gray-50 p-[20px] rounded-[8px]">
+							<Heading className="text-[20px] font-bold text-[#ec3750] m-0 font-['Phantom Sans',Helvetica,sans-serif]">
+								And that's a wrap!
+							</Heading>
+							<Text className="text-[16px] leading-[24px] text-gray-700 font-['Phantom Sans',Helvetica,sans-serif]" dangerouslySetInnerHTML={{ __html: conclusionHtml }} />
+							<Text className="text-[16px] leading-[24px] text-gray-700 italic font-['Phantom Sans',Helvetica,sans-serif]">
+								- Hack Club's Newspaper Team
+							</Text>
+						</Section>
+
+						{/* Footer */}
+						<Hr className="border border-gray-200 my-[24px]" />
+						<Section className="text-center text-gray-500 text-[12px] font-['Phantom Sans',Helvetica,sans-serif]">
+							<Text className="m-0">
+								© {new Date().getFullYear()} Hack Club. All rights reserved.
+							</Text>
+							<Text className="m-0">
+								Hack Club, 15 Falls Road, Shelburne, VT 05482
+							</Text>
+							<Text>
+								<Link
+									href="{unsubscribe_link}"
+									className="text-gray-500 underline"
+								>
+									Manage email preferences
+								</Link>
+							</Text>
+						</Section>
+					</Container>
+				</Body>
+			</Tailwind>
+		</Html>
 	);
 }
