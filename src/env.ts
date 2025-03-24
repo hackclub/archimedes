@@ -8,7 +8,7 @@ const Env = z.object({
 	SLACK_CLIENT_SECRET: z.string(),
 	SLACK_TEAM_ID: z.string(),
 	SLACK_REDIRECT_URI: z.string().url(),
-	SLACK_LOOPS_NOTIFS_CHANNEL_ID: z.string().url().optional(),
+	SLACK_LOOPS_NOTIFS_CHANNEL_ID: z.string().optional(),
 	LOG_LEVEL: z
 		.enum(["debug", "info", "warn", "error", "fatal"])
 		.default("info"),
