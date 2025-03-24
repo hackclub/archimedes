@@ -14,7 +14,7 @@ import {
 	Section,
 	Text,
 	Tailwind,
-} from '@react-email/components';
+} from "@react-email/components";
 
 interface Props {
 	intro: string;
@@ -58,8 +58,8 @@ export default function Email({ intro, conclusion, stories }: Props) {
 					fontFamily="Phantom Sans"
 					fallbackFontFamily="Helvetica"
 					webFont={{
-						url: 'https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2',
-						format: 'woff2',
+						url: "https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2",
+						format: "woff2",
 					}}
 					fontWeight={400}
 					fontStyle="normal"
@@ -68,8 +68,8 @@ export default function Email({ intro, conclusion, stories }: Props) {
 					fontFamily="Phantom Sans"
 					fallbackFontFamily="Helvetica"
 					webFont={{
-						url: 'https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff2',
-						format: 'woff2',
+						url: "https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff2",
+						format: "woff2",
 					}}
 					fontWeight={700}
 					fontStyle="normal"
@@ -78,8 +78,8 @@ export default function Email({ intro, conclusion, stories }: Props) {
 					fontFamily="Phantom Sans"
 					fallbackFontFamily="Helvetica"
 					webFont={{
-						url: 'https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Italic.woff2',
-						format: 'woff2',
+						url: "https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Italic.woff2",
+						format: "woff2",
 					}}
 					fontWeight={400}
 					fontStyle="italic"
@@ -103,13 +103,21 @@ export default function Email({ intro, conclusion, stories }: Props) {
 							<Heading className="text-[24px] font-bold text-[#ec3750] m-0 font-['Phantom Sans',Helvetica,sans-serif]">
 								Welcome back to Happenings!👋
 							</Heading>
-							<Text className="text-[16px] leading-[24px] text-gray-700 font-['Phantom Sans',Helvetica,sans-serif]" dangerouslySetInnerHTML={{ __html: introHtml }} />
+							<Text
+								className="text-[16px] leading-[24px] text-gray-700 font-['Phantom Sans',Helvetica,sans-serif]"
+								// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+								dangerouslySetInnerHTML={{ __html: introHtml }}
+							/>
 						</Section>
 
-						{mappedStories.map((story) => (
-							<>
-								<Section key={story.id} className="mt-[24px]">
-									<Heading className="text-[20px] font-bold text-[#ec3750] m-0 font-['Phantom Sans',Helvetica,sans-serif]" dangerouslySetInnerHTML={{ __html: story.headline }} />
+						{mappedStories.map((story, index) => (
+							<div key={story.id || index}>
+								<Section className="mt-[24px]">
+									<Heading
+										className="text-[20px] font-bold text-[#ec3750] m-0 font-['Phantom Sans',Helvetica,sans-serif]"
+										// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+										dangerouslySetInnerHTML={{ __html: story.headline }}
+									/>
 									{story.image && (
 										<Img
 											src={story.image}
@@ -117,7 +125,11 @@ export default function Email({ intro, conclusion, stories }: Props) {
 											className="w-full h-auto object-cover my-[16px] rounded-[8px]"
 										/>
 									)}
-									<Text className="text-[16px] leading-[24px] text-gray-700 font-['Phantom Sans',Helvetica,sans-serif]" dangerouslySetInnerHTML={{ __html: story.longArticle }} />
+									<Text
+										className="text-[16px] leading-[24px] text-gray-700 font-['Phantom Sans',Helvetica,sans-serif]"
+										// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+										dangerouslySetInnerHTML={{ __html: story.longArticle }}
+									/>
 									{/* <Button
 									href={story.link}
 									className="bg-[#ec3750] text-white font-bold py-[12px] px-[20px] rounded-[8px] mt-[16px] box-border font-['Phantom Sans',Helvetica,sans-serif]"
@@ -125,8 +137,8 @@ export default function Email({ intro, conclusion, stories }: Props) {
 									See All Projects
 								</Button> */}
 								</Section>
-								<Hr key={story.id} className="border border-gray-200 my-[24px]" />
-							</>
+								<Hr className="border border-gray-200 my-[24px]" />
+							</div>
 						))}
 
 						{/* Conclusion */}
@@ -134,7 +146,11 @@ export default function Email({ intro, conclusion, stories }: Props) {
 							<Heading className="text-[20px] font-bold text-[#ec3750] m-0 font-['Phantom Sans',Helvetica,sans-serif]">
 								And that's a wrap!
 							</Heading>
-							<Text className="text-[16px] leading-[24px] text-gray-700 font-['Phantom Sans',Helvetica,sans-serif]" dangerouslySetInnerHTML={{ __html: conclusionHtml }} />
+							<Text
+								className="text-[16px] leading-[24px] text-gray-700 font-['Phantom Sans',Helvetica,sans-serif]"
+								// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+								dangerouslySetInnerHTML={{ __html: conclusionHtml }}
+							/>
 							<Text className="text-[16px] leading-[24px] text-gray-700 italic font-['Phantom Sans',Helvetica,sans-serif]">
 								- Hack Club's Newspaper Team
 							</Text>
