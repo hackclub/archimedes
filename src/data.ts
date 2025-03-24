@@ -115,7 +115,7 @@ async function sendNewsletter(
 	logger.debug({ requestedBy: userId }, "Sending newsletter");
 
 	const reporter = await getReporterBySlackId(userId);
-	await loopsClient.createAndSendCampaign({
+	const campaignId = await loopsClient.createAndSendCampaign({
 		emoji: "📰",
 		name: `Archimedes: ${subject}`,
 		subject,
@@ -128,6 +128,13 @@ async function sendNewsletter(
 		fromEmailUsername: reporter?.emailUsername || "archimedes",
 		replyToEmail: "newspaper@hackclub.com",
 	});
+
+	if (env.SLACK_LOOPS_NOTIFS_CHANNEL_ID) {
+		await client.chat.postMessage({
+			channel: env.SLACK_LOOPS_NOTIFS_CHANNEL_ID,
+			text: `:tw_mailbox_with_mail: Email *${subject}* has been sent out! Please approve on Loops: https://app.loops.so/campaigns/${campaignId}/compose?stepName=Compose`,
+		});
+	}
 }
 
 export async function publishStory(
