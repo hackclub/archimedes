@@ -24,6 +24,7 @@ export default async (firstName: string, slackId: string) => {
 					},
 				]
 			: stories
+					.filter((story) => story.status !== "Published")
 					.sort((a, b) => sortMap[b.status] - sortMap[a.status])
 					.map((story) => {
 						return {
