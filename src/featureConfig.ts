@@ -19,25 +19,19 @@ const stagingConfig: Config = {
 		audienceSegmentId: "cm7j9be4v01dkk2vxh63ey3h9",
 	},
 };
-const productionConfig: Config = {
-	loops: {
-		audienceFilter: {
-			OR: [
-				{
-					key: "email",
-					value: "newspaper-team-aaaaoautyqltfondzniib7pzia@hackclub.slack.com",
-					operation: "equals",
-				},
-				{
-					key: "email",
-					value: "hi@skyfall.dev",
-					operation: "equals",
-				},
-			],
-		},
-		audienceSegmentId: null,
-	},
-};
+// const productionConfig: Config = {
+// 	loops: {
+// 		audienceFilter: {
+// 			AND: [
+// 				{
+// 					key: "email",
+// 					value: "hi@skyfall.dev",
+// 					operation: "contains",
+// 				},
+// 			],
+// 		},
+// 		audienceSegmentId: "cm7j9be4v01dkk2vxh63ey3h9",
+// 	},
+// };
 
-export const config =
-	process.env.NODE_ENV === "production" ? productionConfig : stagingConfig;
+export const config = stagingConfig;

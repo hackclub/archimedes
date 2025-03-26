@@ -150,11 +150,12 @@ export const richTextBlockToMrkdwn = (
 export async function runPasses(md: string, client: Slack.webApi.WebClient) {
 	const displayNamesPass = await mentionsToDisplayNamesPass(md, client);
 	const channelIdsPass = await channelIdsToNamesPass(displayNamesPass, client);
-	const usergroupIdsPass = await usergroupIdsToNamesPass(
-		channelIdsPass,
-		client,
-	);
-	return usergroupIdsPass;
+	// const usergroupIdsPass = await usergroupIdsToNamesPass(
+	// 	channelIdsPass,
+	// 	client,
+	// );
+	// return usergroupIdsPass;
+	return channelIdsPass;
 }
 
 async function mentionsToDisplayNamesPass(

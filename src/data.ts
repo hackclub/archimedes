@@ -74,7 +74,9 @@ async function sendNewsletter(
 		{ requestedBy: userId },
 		"sendNewsletter: Running passes on mrkdwn",
 	);
+	console.log("Stage 1");
 	const finalIntroMd = await runPasses(introMd, client);
+	console.log("Stage 2");
 	const finalConclusionMd = await runPasses(conclusionMd, client);
 	logger.debug(
 		{ requestedBy: userId },
@@ -86,11 +88,14 @@ async function sendNewsletter(
 			intro: finalIntroMd,
 			conclusion: finalConclusionMd,
 			stories: await Promise.all(
-				stories.map(async (story) => ({
-					...story,
-					headline: await runPasses(story.headline, client),
-					longArticle: await runPasses(story.longArticle, client),
-				})),
+				stories.map(async (story) => {
+					console.log("Running passes on" + story.headline);
+					return {
+						...story,
+						headline: await runPasses(story.headline, client),
+						longArticle: await runPasses(story.longArticle, client),
+					};
+				}),
 			),
 			// intro: introMd, conclusion: conclusionMd, stories,
 		}),
@@ -113,6 +118,10 @@ async function sendNewsletter(
 		"mjml.zip",
 	);
 	logger.debug({ requestedBy: userId }, "Sending newsletter");
+
+	try {
+		await Bun.write(`${subject}.mjml.zip`, generatedZip);
+	} catch {}
 
 	const reporter = await getReporterBySlackId(userId);
 	const campaignId = await loopsClient.createAndSendCampaign({
