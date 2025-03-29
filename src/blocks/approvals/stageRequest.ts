@@ -13,6 +13,8 @@ export function stageRequest(
 	}));
 	return {
 		text: `${story.headline} - ${story.shortDescription}`,
+		unfurl_links: false,
+		unfurl_media: false,
 		blocks: [
 			{
 				type: "header",
