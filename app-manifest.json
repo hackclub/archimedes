@@ -16,8 +16,8 @@
 		},
 		"slash_commands": [
 			{
-				"command": "/arch-publish",
-				"description": "Publish a #happenings post and send out the newsletter",
+				"command": "/arch-upload-emoji",
+				"description": "Upload a custom emoji to Notion",
 				"should_escape": false
 			}
 		]
@@ -41,7 +41,7 @@
 	},
 	"settings": {
 		"event_subscriptions": {
-			"bot_events": ["app_home_opened", "message.channels"]
+			"bot_events": []
 		},
 		"interactivity": {
 			"is_enabled": true

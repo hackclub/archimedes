@@ -21,15 +21,18 @@
 	},
 	"dependencies": {
 		"@isaacs/ttlcache": "^1.4.1",
+		"@notionhq/client": "^3.0.1",
 		"@react-email/components": "0.0.32",
 		"@slack/bolt": "^4.2.1",
 		"jszip": "^3.10.1",
 		"loops-campaign-api": "^0.1.6",
+		"notion-to-md": "^3.1.9",
 		"pino": "^9.6.0",
 		"pino-pretty": "^13.0.0",
 		"react": "19.0.0",
 		"react-email": "3.0.6",
 		"slack-markdown": "^0.3.0",
+		"slackify-markdown": "^4.4.0",
 		"zod": "^3.24.2",
 		"zod-validation-error": "^3.4.0"
 	},
