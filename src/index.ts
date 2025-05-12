@@ -78,6 +78,8 @@ async function exportReadyToPublishPages() {
       channel: env.HAPPENINGS_CHANNEL_ID,
       text: mrkdwnString,
       mrkdwn: true,
+      unfurl_links: false,
+      unfurl_media: false,
     });
   }
 }
