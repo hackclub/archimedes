@@ -85,7 +85,7 @@ const app = new App({
 			path: "/{*rest}",
 			method: ["GET"],
 			handler: (_, res) => {
-				res.writeHead(302, { Location: "https://skyfall.dev/misc/archimedes" });
+				res.writeHead(302, { Location: "https://news.hackclub.com/?utm_source=archimedes" });
 				res.end();
 			},
 		},
